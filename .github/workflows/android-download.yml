@@ -51,10 +51,20 @@ jobs:
               with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
                   summary.write('## Build failure details\n\n```text\n' + excerpt + '\n```\n')
       - name: Prepare downloads
+        shell: bash
         run: |
+          set -Eeuo pipefail
+          trap 'echo "::error title=Download packaging failed::Packaging failed at line $LINENO. See Prepare downloads for the command output."' ERR
           mkdir downloads
+          # Use an explicit ephemeral test key; AGP's debug-key location varies
+          # with ANDROID_USER_HOME and runner configuration.
+          test_keystore="$RUNNER_TEMP/vitalday-test.jks"
+          keytool -genkeypair -noprompt -keystore "$test_keystore" \
+            -storepass android -keypass android -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 3650 \
+            -dname "CN=VitalDay Test, O=Development, C=LK"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" sign \
-            --ks "${ANDROID_USER_HOME:-$HOME/.android}/debug.keystore" \
+            --ks "$test_keystore" \
             --ks-key-alias androiddebugkey --ks-pass pass:android --key-pass pass:android \
             --out downloads/VitalDay-installable-test.apk app/build/outputs/apk/release/app-release-unsigned.apk
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify downloads/VitalDay-installable-test.apk
