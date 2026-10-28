@@ -33,7 +33,21 @@ jobs:
       - name: Build and validate
         run: |
           chmod +x gradlew scripts/build-release.sh
-          ./scripts/build-release.sh --no-daemon '-Dorg.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8' --max-workers=2
+          ./scripts/build-release.sh --no-daemon '-Dorg.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8' --max-workers=2 --console=plain 2>&1 | tee build.log
+      - name: Report build failure
+        if: failure()
+        shell: python
+        run: |
+          from pathlib import Path
+          import os
+          log = Path('build.log')
+          if log.exists():
+              text = log.read_text(errors='replace')
+              excerpt = text[-12000:]
+              escaped = excerpt.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print('::error title=Build failure details::' + escaped)
+              with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+                  summary.write('## Build failure details\n\n```text\n' + excerpt + '\n```\n')
       - name: Prepare downloads
         run: |
           mkdir downloads
@@ -56,6 +70,7 @@ jobs:
         with:
           name: Wellbeing-build-diagnostics
           path: |
+            build.log
             app/build/reports/
             app/build/test-results/
           if-no-files-found: ignore
