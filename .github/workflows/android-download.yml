@@ -11,18 +11,25 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
       - name: Install Android SDK
-        run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
-      - uses: gradle/actions/setup-gradle@v4
+        shell: bash
+        run: |
+          # GitHub's Ubuntu runner already supplies Android command-line tools.
+          sdkmanager_bin="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$sdkmanager_bin"
+          # yes exits with SIGPIPE once sdkmanager stops reading; only the
+          # sdkmanager exit status should determine license acceptance success.
+          (set +o pipefail; yes | "$sdkmanager_bin" --licenses > /dev/null)
+          "$sdkmanager_bin" 'platforms;android-36' 'build-tools;35.0.0'
+      - uses: gradle/actions/setup-gradle@v5
       - name: Build and validate
         run: |
           chmod +x gradlew scripts/build-release.sh
@@ -37,9 +44,19 @@ jobs:
           printf '%s\n' 'APK: debug-signed for testing only. AAB: unsigned, requires owner signing before Play upload. Device testing remains required. The CI debug certificate may differ from other builds; an update may require uninstalling the older test app, which deletes its local data. Export your journal before uninstalling.' > downloads/READ-ME.txt
           cd downloads
           sha256sum *.apk *.aab *.zip > SHA256SUMS.txt
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: Wellbeing-Android-download
           path: downloads/
           if-no-files-found: error
           retention-days: 30
+      - name: Upload build diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: Wellbeing-build-diagnostics
+          path: |
+            app/build/reports/
+            app/build/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
