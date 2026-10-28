@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "version": "usda-reference-a892791-v1",
+  "sourceUrl": "https://raw.githubusercontent.com/wesm/pydata-book/a892791ce5a3831134cfa2989033ecbb9289f1ea/datasets/usda_food/database.json",
+  "sourceSha256": "0708114d31e5dfa614ffaeafffbb2f78d0ef966c2624100749b8093f399722f2",
+  "basis": "Per 100 g edible portion; preparation exactly as source description",
+  "review": "Automated source comparison, duplicate consistency, units and bounds checked. Not a dietitian or clinical approval; primary USDA service unavailable in this environment.",
+  "foods": [
+    {
+      "id": "usda-mirror:1129",
+      "key": "egg",
+      "sourceDescription": "Egg, whole, cooked, hard-boiled",
+      "referenceGrams": 100,
+      "kcal": 155.0,
+      "proteinG": 12.58,
+      "carbohydrateG": 1.12,
+      "fatG": 10.61,
+      "fiberG": 0.0
+    },
+    {
+      "id": "usda-mirror:8121",
+      "key": "oats",
+      "sourceDescription": "Cereals, oats, regular and quick and instant, unenriched, cooked with water (includes boiling and microwaving), without salt",
+      "referenceGrams": 100,
+      "kcal": 71.0,
+      "proteinG": 2.54,
+      "carbohydrateG": 12.0,
+      "fatG": 1.52,
+      "fiberG": 1.7
+    },
+    {
+      "id": "usda-mirror:9003",
+      "key": "apple",
+      "sourceDescription": "Apples, raw, with skin",
+      "referenceGrams": 100,
+      "kcal": 52.0,
+      "proteinG": 0.26,
+      "carbohydrateG": 13.81,
+      "fatG": 0.17,
+      "fiberG": 2.4
+    },
+    {
+      "id": "usda-mirror:9040",
+      "key": "banana",
+      "sourceDescription": "Bananas, raw",
+      "referenceGrams": 100,
+      "kcal": 89.0,
+      "proteinG": 1.09,
+      "carbohydrateG": 22.84,
+      "fatG": 0.33,
+      "fiberG": 2.6
+    },
+    {
+      "id": "usda-mirror:9050",
+      "key": "blueberries",
+      "sourceDescription": "Blueberries, raw",
+      "referenceGrams": 100,
+      "kcal": 57.0,
+      "proteinG": 0.74,
+      "carbohydrateG": 14.49,
+      "fatG": 0.33,
+      "fiberG": 2.4
+    },
+    {
+      "id": "usda-mirror:9200",
+      "key": "orange",
+      "sourceDescription": "Oranges, raw, all commercial varieties",
+      "referenceGrams": 100,
+      "kcal": 47.0,
+      "proteinG": 0.94,
+      "carbohydrateG": 11.75,
+      "fatG": 0.12,
+      "fiberG": 2.4
+    },
+    {
+      "id": "usda-mirror:16070",
+      "key": "lentils",
+      "sourceDescription": "Lentils, mature seeds, cooked, boiled, without salt",
+      "referenceGrams": 100,
+      "kcal": 116.0,
+      "proteinG": 9.02,
+      "carbohydrateG": 20.13,
+      "fatG": 0.38,
+      "fiberG": 7.9
+    },
+    {
+      "id": "usda-mirror:20045",
+      "key": "rice",
+      "sourceDescription": "Rice, white, long-grain, regular, cooked",
+      "referenceGrams": 100,
+      "kcal": 130.0,
+      "proteinG": 2.69,
+      "carbohydrateG": 28.17,
+      "fatG": 0.28,
+      "fiberG": 0.4
+    }
+  ]
+}

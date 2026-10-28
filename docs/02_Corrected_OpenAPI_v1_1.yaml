@@ -1,0 +1,1997 @@
+openapi: 3.1.0
+info:
+  title: Wellbeing AI REST API - corrected implementation contract
+  version: 1.1.0-draft
+  description: IMPLEMENTATION CONTRACT (not deployed software). All non-public paths require authentication and resource-owner
+    authorization, including files, jobs, export and deletion. The mobile app must not directly call the vision model.
+    High-risk clinical features disabled server-side pending documented approvals. All timestamps RFC3339 UTC offsets;
+    no silent user-data training. API review and integration testing still required.
+servers:
+- url: https://api.example.invalid/v1
+  description: 'PLACEHOLDER ONLY: set production URL after security review'
+security:
+- bearerAuth: []
+paths:
+  /profile:
+    get:
+      summary: Get current user's profile
+      responses:
+        '200':
+          description: Profile returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_profile
+    put:
+      summary: Update current user's profile/preferences
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdate'
+      responses:
+        '200':
+          description: Updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: put_profile
+  /dashboard:
+    get:
+      summary: Current-day dashboard summary
+      parameters:
+      - in: query
+        name: date
+        schema:
+          type: string
+          format: date
+        required: false
+      responses:
+        '200':
+          description: Dashboard totals and latest activity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_dashboard
+  /food/analyze-image:
+    post:
+      summary: Start asynchronous meal photo analysis
+      description: Explicit purpose-specific consent required; only accept ready food_image uploaded by caller. Result
+        contains editable candidates, never saves food log.
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+          minLength: 8
+          maxLength: 128
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - image_upload_id
+              - consent_version
+              properties:
+                image_upload_id:
+                  type: string
+                meal_context:
+                  type:
+                  - string
+                  - 'null'
+                  enum:
+                  - breakfast
+                  - lunch
+                  - dinner
+                  - snack
+                  - null
+                consent_version:
+                  type: string
+                locale:
+                  type: string
+                  enum:
+                  - en
+                  - si
+                  - ta
+                  default: en
+              additionalProperties: false
+      responses:
+        '202':
+          description: Analysis job accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStatus'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '413':
+          description: File too large
+        '429':
+          description: Rate limit exceeded
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: post_food_analyze_image
+  /jobs/{job_id}:
+    get:
+      summary: Read the status of an asynchronous job owned by the caller
+      parameters:
+      - in: path
+        name: job_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Job status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStatus'
+        '404':
+          description: Not found or not owned by caller
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_jobs_job_id
+  /food/logs:
+    get:
+      summary: List current user's food logs
+      parameters:
+      - in: query
+        name: from
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: to
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: limit
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 30
+      responses:
+        '200':
+          description: Log page
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                - next_cursor
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FoodLog'
+                  next_cursor:
+                    type:
+                    - string
+                    - 'null'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_food_logs
+    post:
+      summary: Save a user-confirmed food log
+      description: The client submits confirmed candidates and portion values; server recomputes totals.
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodLogCreate'
+      responses:
+        '201':
+          description: Saved log
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodLog'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: post_food_logs
+  /activity/sessions:
+    post:
+      summary: Save completed workout/walking session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivitySessionCreate'
+      responses:
+        '201':
+          description: Saved session
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+      operationId: post_activity_sessions
+    get:
+      summary: List owned workout sessions
+      responses:
+        '200':
+          description: Sessions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ActivitySessionCreate'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_activity_sessions
+  /hydration/logs:
+    post:
+      summary: Add hydration log
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HydrationLogCreate'
+      responses:
+        '201':
+          description: Saved log
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+      operationId: post_hydration_logs
+    get:
+      summary: List owned hydration logs
+      responses:
+        '200':
+          description: Hydration entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/HydrationLogCreate'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_hydration_logs
+  /products/barcode/{barcode}:
+    get:
+      summary: Find packaged product nutrition records by barcode
+      parameters:
+      - in: path
+        name: barcode
+        required: true
+        schema:
+          type: string
+          minLength: 4
+          maxLength: 32
+      - in: query
+        name: region
+        schema:
+          type: string
+          default: LK
+      responses:
+        '200':
+          description: Candidate list, possibly empty
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  candidates:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductNutrition'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: get_products_barcode_barcode
+  /uploads/presign:
+    post:
+      summary: Create a short-lived upload URL for an approved file purpose
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadPurposeRequest'
+      responses:
+        '201':
+          description: Short-lived upload URL; do not log URL/token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadReceipt'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      description: Purpose-dependent MIME and size validation; block lab_report when feature flag off; verify explicit
+        owner consent, malware scan, checksum, and EXIF redaction policy.
+      operationId: post_uploads_presign
+  /reports:
+    post:
+      summary: Start a report OCR job; production endpoint disabled until clinical/legal sign-off
+      description: Never return a diagnosis or treatment prescription. Require owner authorization and confirmed extraction.
+        Disabled in all public releases unless written clinical, privacy and regulatory sign-offs; server-side default
+        deny; no medical diagnosis.
+      x-feature-flag: report_assistant_enabled__DEFAULT_FALSE
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - upload_id
+              - consent_version
+              properties:
+                upload_id:
+                  type: string
+                consent_version:
+                  type: string
+      responses:
+        '202':
+          description: OCR job accepted if feature is enabled
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: post_reports
+  /reports/{report_id}:
+    get:
+      summary: Read an owned report's extracted values and review status
+      x-feature-flag: report_assistant_enabled__DEFAULT_FALSE
+      parameters:
+      - in: path
+        name: report_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Report extraction; may contain unconfirmed values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabReport'
+        '404':
+          description: Not found or not owned by caller
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      description: Disabled in all public releases unless written clinical, privacy and regulatory sign-offs; server-side
+        default deny; no medical diagnosis.
+      operationId: get_reports_report_id
+  /account/export:
+    post:
+      summary: Create a current user's data export job
+      responses:
+        '202':
+          description: Export job accepted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: post_account_export
+  /account/delete:
+    post:
+      summary: Request deletion of the current user's account and data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - confirmation
+              properties:
+                confirmation:
+                  type: string
+                  enum:
+                  - DELETE_MY_ACCOUNT
+      responses:
+        '202':
+          description: Deletion job accepted with documented backup retention limits
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: post_account_delete
+  /uploads/complete:
+    post:
+      summary: Verify uploaded object before processing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadCompletion'
+      responses:
+        '200':
+          description: Validated or pending validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadVerified'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: post_uploads_complete
+  /food/logs/{log_id}:
+    patch:
+      summary: Correct logged item/portion, recalculating totals
+      parameters:
+      - in: path
+        name: log_id
+        required: true
+        schema:
+          type: string
+      - in: header
+        name: If-Match
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodLogCreate'
+      responses:
+        '200':
+          description: Corrected record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodLog'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: patch_food_logs_log_id
+    delete:
+      summary: Delete owned food log (tombstone for offline sync)
+      parameters:
+      - in: path
+        name: log_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: delete_food_logs_log_id
+  /measurements:
+    get:
+      summary: List owned dated measurements
+      responses:
+        '200':
+          description: Measurements
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Measurement'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_measurements
+    post:
+      summary: Create weight/height measurement, calculate BMI when eligible
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MeasurementCreate'
+      responses:
+        '201':
+          description: Saved measurement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Measurement'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: post_measurements
+  /mood/checkins:
+    get:
+      summary: List optional private mood check-ins
+      responses:
+        '200':
+          description: Entries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MoodCheckIn'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_mood_checkins
+    post:
+      summary: Create optional non-diagnostic mood check-in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoodCheckInCreate'
+      responses:
+        '201':
+          description: Saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MoodCheckIn'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: post_mood_checkins
+  /consents:
+    get:
+      summary: Read current user purpose-specific consent decisions
+      responses:
+        '200':
+          description: Consent records
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ConsentRecord'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_consents
+    put:
+      summary: Grant or withdraw one purpose-specific consent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentUpdate'
+      responses:
+        '200':
+          description: Consent recorded; withdrawal prevents future processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentRecord'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: put_consents
+  /reminder-preferences:
+    get:
+      summary: User reminder configuration
+      responses:
+        '200':
+          description: Preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderPreferences'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_reminder_preferences
+    put:
+      summary: Set reminders/quiet hours; suppress generic goals if restriction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderPreferences'
+      responses:
+        '200':
+          description: Preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderPreferences'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: put_reminder_preferences
+  /foods/search:
+    get:
+      summary: Search curated local and international foods
+      parameters:
+      - in: query
+        name: q
+        required: true
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 100
+      - in: query
+        name: locale
+        schema:
+          type: string
+          enum:
+          - en
+          - si
+          - ta
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - food_id
+                      - name
+                      - data_source_id
+                      properties:
+                        food_id:
+                          type: string
+                        name:
+                          type: string
+                        data_source_id:
+                          type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_foods_search
+  /recipes:
+    get:
+      summary: Curated recipes with source and budget metadata
+      parameters:
+      - in: query
+        name: cuisine
+        schema:
+          type: string
+      - in: query
+        name: max_cost_lkr
+        schema:
+          type: number
+          minimum: 0
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Recipe'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+      operationId: get_recipes
+  /meal-plans:
+    post:
+      summary: Draft user-reviewed budget meal plan; never invent prices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MealPlanCreate'
+      responses:
+        '201':
+          description: Draft plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MealPlan'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable'
+      operationId: post_meal_plans
+  /account/export/{job_id}:
+    get:
+      summary: Owned export job status and expiring link
+      parameters:
+      - in: path
+        name: job_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - job_id
+                - status
+                properties:
+                  job_id:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                    - queued
+                    - processing
+                    - completed
+                    - failed
+                  download_url:
+                    type:
+                    - string
+                    - 'null'
+                    format: uri
+                  expires_at:
+                    type:
+                    - string
+                    - 'null'
+                    format: date-time
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: get_account_export_job_id
+  /account/delete/{job_id}:
+    get:
+      summary: Owned account deletion job status
+      parameters:
+      - in: path
+        name: job_id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletionStatus'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/ServerError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: get_account_delete_job_id
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    BadRequest:
+      description: Malformed or invalid input; no sensitive fields echoed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Unauthorized:
+      description: Unauthenticated
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Forbidden:
+      description: Permission denied or feature unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Conflict:
+      description: Version conflict or idempotency-key payload mismatch
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    Unprocessable:
+      description: Domain rule failure or unsupported nutrition units
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    TooManyRequests:
+      description: Rate limited; honor Retry-After header
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    NotFound:
+      description: Unknown resource or not owned by caller
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+    ServerError:
+      description: Unspecified internal failure; no sensitive details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+  schemas:
+    UserProfile:
+      type: object
+      properties:
+        user_id:
+          type: string
+        locale:
+          type: string
+          enum:
+          - en
+          - si
+          - ta
+        timezone:
+          type: string
+        units:
+          type: string
+          enum:
+          - metric
+          - imperial
+        age_eligible:
+          type: boolean
+          description: Adult core app 18+; adult BMI category only 20+ in current requirements.
+        budget_currency:
+          type: string
+          default: LKR
+        height_cm:
+          type:
+          - number
+          - 'null'
+          minimum: 50
+          maximum: 260
+    ProfileUpdate:
+      type: object
+      properties:
+        locale:
+          type: string
+          enum:
+          - en
+          - si
+          - ta
+        timezone:
+          type: string
+        units:
+          type: string
+          enum:
+          - metric
+          - imperial
+        height_cm:
+          type:
+          - number
+          - 'null'
+          minimum: 50
+          maximum: 260
+        preferences:
+          type: object
+          additionalProperties: false
+          properties:
+            cuisines:
+              type: array
+              items:
+                type: string
+            dietary_pattern:
+              type: string
+              enum:
+              - omnivore
+              - vegetarian
+              - vegan
+              - other
+            allergen_ids:
+              type: array
+              items:
+                type: string
+            daily_food_budget_lkr:
+              type:
+              - number
+              - 'null'
+              minimum: 0
+            goals:
+              type: array
+              items:
+                type: string
+      additionalProperties: false
+    DashboardSummary:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        food_energy_kcal_estimate:
+          type:
+          - number
+          - 'null'
+        food_energy_min_kcal:
+          type:
+          - number
+          - 'null'
+        food_energy_max_kcal:
+          type:
+          - number
+          - 'null'
+        hydration_ml:
+          type: integer
+          minimum: 0
+        activity_minutes:
+          type: integer
+          minimum: 0
+        last_updated:
+          type: string
+          format: date-time
+    JobStatus:
+      type: object
+      required:
+      - job_id
+      - status
+      properties:
+        job_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - queued
+          - processing
+          - needs_user_review
+          - completed
+          - failed
+          - cancelled
+        progress_percent:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Best-effort UI progress; may be omitted if unknown.
+        result:
+          oneOf:
+          - $ref: '#/components/schemas/FoodAnalysisResult'
+          - type: 'null'
+          description: Food analysis jobs only. For other job types use separate typed response at implementation.
+        safe_error_code:
+          type:
+          - string
+          - 'null'
+    FoodLogCreate:
+      type: object
+      required:
+      - occurred_at
+      - meal_type
+      - items
+      - user_confirmed
+      properties:
+        occurred_at:
+          type: string
+          format: date-time
+        meal_type:
+          type: string
+          enum:
+          - breakfast
+          - lunch
+          - dinner
+          - snack
+          - beverage
+          - other
+        user_confirmed:
+          type: boolean
+          const: true
+        items:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+            - food_id
+            - quantity
+            - unit
+            properties:
+              food_id:
+                type: string
+              quantity:
+                type: number
+                exclusiveMinimum: 0
+              unit:
+                type: string
+              user_note:
+                type:
+                - string
+                - 'null'
+                maxLength: 500
+              amount_consumed_fraction:
+                type:
+                - number
+                - 'null'
+                minimum: 0
+                maximum: 1
+            additionalProperties: false
+        analysis_job_id:
+          type:
+          - string
+          - 'null'
+        client_mutation_id:
+          type: string
+          format: uuid
+      additionalProperties: false
+    FoodLog:
+      type: object
+      properties:
+        log_id:
+          type: string
+        occurred_at:
+          type: string
+          format: date-time
+        meal_type:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        energy_kcal_estimate:
+          type:
+          - number
+          - 'null'
+        energy_kcal_min:
+          type:
+          - number
+          - 'null'
+        energy_kcal_max:
+          type:
+          - number
+          - 'null'
+        source_trace:
+          type: object
+          additionalProperties: true
+          description: Auditable source IDs, nutrition data version, portion conversions, and model version. Redact
+            in analytics.
+        nutrient_source_version:
+          type: string
+        user_confirmed:
+          type: boolean
+          const: true
+    ProductNutrition:
+      type: object
+      properties:
+        product_id:
+          type: string
+        barcode:
+          type: string
+        brand:
+          type:
+          - string
+          - 'null'
+        product_name:
+          type: string
+        region:
+          type: string
+        serving_size_text:
+          type:
+          - string
+          - 'null'
+        energy_kcal_per_serving:
+          type:
+          - number
+          - 'null'
+        nutrients_per_serving:
+          type: object
+          additionalProperties: true
+        source:
+          type: string
+        last_verified_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        serving_size_g:
+          type:
+          - number
+          - 'null'
+          exclusiveMinimum: 0
+        energy_kj_per_serving:
+          type:
+          - number
+          - 'null'
+          minimum: 0
+    ActivitySessionCreate:
+      type: object
+      required:
+      - activity_type
+      - started_at
+      - ended_at
+      - duration_seconds
+      properties:
+        activity_type:
+          type: string
+          maxLength: 80
+        started_at:
+          type: string
+          format: date-time
+        ended_at:
+          type: string
+          format: date-time
+        duration_seconds:
+          type: integer
+          minimum: 0
+          maximum: 86400
+        intensity:
+          type:
+          - string
+          - 'null'
+          enum:
+          - light
+          - moderate
+          - vigorous
+          - unknown
+          - null
+        source:
+          type: string
+          enum:
+          - manual
+          - health_connect
+          - wearable
+        client_mutation_id:
+          type: string
+          format: uuid
+    HydrationLogCreate:
+      type: object
+      required:
+      - occurred_at
+      - volume_ml
+      properties:
+        occurred_at:
+          type: string
+          format: date-time
+        volume_ml:
+          type: integer
+          minimum: 1
+          maximum: 5000
+        source:
+          type: string
+          enum:
+          - manual
+          - reminder_quick_add
+          - import
+        client_mutation_id:
+          type: string
+          format: uuid
+    LabReport:
+      type: object
+      properties:
+        report_id:
+          type: string
+        report_date:
+          type:
+          - string
+          - 'null'
+          format: date
+        status:
+          type: string
+          enum:
+          - processing
+          - needs_user_review
+          - reviewed
+          - failed
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              test_name_raw:
+                type: string
+              value_raw:
+                type:
+                - string
+                - 'null'
+              unit_raw:
+                type:
+                - string
+                - 'null'
+              lab_range_raw:
+                type:
+                - string
+                - 'null'
+              page_number:
+                type:
+                - integer
+                - 'null'
+                minimum: 1
+              ocr_confidence:
+                type: number
+                minimum: 0
+                maximum: 1
+              user_confirmed:
+                type: boolean
+              explanation_source_id:
+                type:
+                - string
+                - 'null'
+    ApiError:
+      type: object
+      additionalProperties: false
+      required:
+      - error_code
+      - message
+      - request_id
+      properties:
+        error_code:
+          type: string
+        message:
+          type: string
+        request_id:
+          type: string
+        retry_after_seconds:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+    PageInfo:
+      type: object
+      required:
+      - next_cursor
+      properties:
+        next_cursor:
+          type:
+          - string
+          - 'null'
+    ConsentRecord:
+      type: object
+      additionalProperties: false
+      required:
+      - purpose
+      - consent_version
+      - granted
+      - updated_at
+      properties:
+        purpose: &id001
+          type: string
+          enum:
+          - food_image_processing
+          - model_training_optional
+          - health_connect
+          - reminder_notifications
+          - lab_report_processing
+        consent_version:
+          type: string
+        granted:
+          type: boolean
+        updated_at:
+          type: string
+          format: date-time
+    ConsentUpdate:
+      type: object
+      additionalProperties: false
+      required:
+      - purpose
+      - consent_version
+      - granted
+      properties:
+        purpose: *id001
+        consent_version:
+          type: string
+          minLength: 1
+        granted:
+          type: boolean
+    MeasurementCreate:
+      type: object
+      additionalProperties: false
+      required:
+      - measured_at
+      - weight_kg
+      properties:
+        measured_at:
+          type: string
+          format: date-time
+        weight_kg:
+          type: number
+          minimum: 15
+          maximum: 400
+        height_cm:
+          type:
+          - number
+          - 'null'
+          minimum: 50
+          maximum: 260
+        client_mutation_id:
+          type: string
+          format: uuid
+    Measurement:
+      allOf:
+      - $ref: '#/components/schemas/MeasurementCreate'
+      - type: object
+        required:
+        - measurement_id
+        properties:
+          measurement_id:
+            type: string
+            format: uuid
+          bmi_estimate:
+            type:
+            - number
+            - 'null'
+          bmi_category:
+            type:
+            - string
+            - 'null'
+            description: Do not return an adult category to ineligible age groups.
+    MoodCheckInCreate:
+      type: object
+      additionalProperties: false
+      required:
+      - occurred_at
+      - mood_score
+      properties:
+        occurred_at:
+          type: string
+          format: date-time
+        mood_score:
+          type: integer
+          minimum: 1
+          maximum: 5
+        stress_score:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 5
+        note:
+          type:
+          - string
+          - 'null'
+          maxLength: 280
+    MoodCheckIn:
+      allOf:
+      - $ref: '#/components/schemas/MoodCheckInCreate'
+      - type: object
+        required:
+        - checkin_id
+        properties:
+          checkin_id:
+            type: string
+    FoodCandidate:
+      type: object
+      additionalProperties: false
+      required:
+      - candidate_id
+      - candidate_name
+      - portion_low_g
+      - portion_high_g
+      - identity_confidence
+      properties:
+        candidate_id:
+          type: string
+        candidate_name:
+          type: string
+        alternatives:
+          type: array
+          items:
+            type: string
+        portion_low_g:
+          type:
+          - number
+          - 'null'
+          minimum: 0
+        portion_likely_g:
+          type:
+          - number
+          - 'null'
+          minimum: 0
+        portion_high_g:
+          type:
+          - number
+          - 'null'
+          minimum: 0
+        identity_confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        cooking_method:
+          type: string
+          enum:
+          - unknown
+          - fried
+          - steamed
+          - boiled
+          - grilled
+          - baked
+          - raw
+          - other
+        clarification_questions:
+          type: array
+          items:
+            type: string
+    FoodAnalysisResult:
+      type: object
+      additionalProperties: false
+      required:
+      - schema_version
+      - image_quality
+      - user_confirmation_required
+      - candidates
+      properties:
+        schema_version:
+          type: string
+          enum:
+          - food-candidates.v1
+        image_quality:
+          type: string
+          enum:
+          - acceptable
+          - retake_recommended
+          - unsupported
+        user_confirmation_required:
+          type: boolean
+          const: true
+        candidates:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoodCandidate'
+        model_version:
+          type: string
+        reason_code:
+          type:
+          - string
+          - 'null'
+    ReminderPreferences:
+      type: object
+      additionalProperties: false
+      required:
+      - enabled
+      - timezone
+      - quiet_hours_start
+      - quiet_hours_end
+      properties:
+        enabled:
+          type: boolean
+        timezone:
+          type: string
+        quiet_hours_start:
+          type: string
+          pattern: ^([01][0-9]|2[0-3]):[0-5][0-9]$
+        quiet_hours_end:
+          type: string
+          pattern: ^([01][0-9]|2[0-3]):[0-5][0-9]$
+        water_reminders_per_day:
+          type: integer
+          minimum: 0
+          maximum: 12
+        fluid_restriction_declared:
+          type: boolean
+        clinician_set_goal_ml:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 10000
+    Recipe:
+      type: object
+      additionalProperties: false
+      required:
+      - recipe_id
+      - name
+      - cuisine
+      - servings
+      - source_id
+      - reviewed_at
+      properties:
+        recipe_id:
+          type: string
+        name:
+          type: string
+        cuisine:
+          type: string
+        servings:
+          type: integer
+          minimum: 1
+        ingredients:
+          type: array
+          items:
+            type: object
+            required:
+            - food_name
+            - quantity
+            - unit
+            properties:
+              food_name:
+                type: string
+              quantity:
+                type: number
+                exclusiveMinimum: 0
+              unit:
+                type: string
+        estimated_cost_lkr:
+          type:
+          - number
+          - 'null'
+          minimum: 0
+        price_as_of:
+          type:
+          - string
+          - 'null'
+          format: date
+        price_source:
+          type:
+          - string
+          - 'null'
+        source_id:
+          type: string
+        reviewed_at:
+          type: string
+          format: date
+        allergens:
+          type: array
+          items:
+            type: string
+        steps:
+          type: array
+          items:
+            type: string
+    MealPlanCreate:
+      type: object
+      additionalProperties: false
+      required:
+      - start_date
+      - days
+      - daily_budget_lkr
+      - cuisine_preferences
+      properties:
+        start_date:
+          type: string
+          format: date
+        days:
+          type: integer
+          minimum: 1
+          maximum: 7
+        daily_budget_lkr:
+          type: number
+          minimum: 100
+          maximum: 50000
+        cuisine_preferences:
+          type: array
+          items:
+            type: string
+        allergens_to_avoid:
+          type: array
+          items:
+            type: string
+        max_cooking_minutes:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+          maximum: 240
+        available_ingredients:
+          type: array
+          items:
+            type: string
+    MealPlan:
+      type: object
+      additionalProperties: false
+      required:
+      - plan_id
+      - status
+      - days
+      - currency
+      properties:
+        plan_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - draft
+          - saved
+        days:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        currency:
+          type: string
+          enum:
+          - LKR
+        estimated_total_lkr:
+          type:
+          - number
+          - 'null'
+        pricing_data_date:
+          type:
+          - string
+          - 'null'
+          format: date
+        unavailable_prices:
+          type: array
+          items:
+            type: string
+    DeletionStatus:
+      type: object
+      required:
+      - job_id
+      - status
+      properties:
+        job_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - queued
+          - processing
+          - completed
+          - failed
+        primary_deleted_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        backup_expiry_description:
+          type: string
+    UploadPurposeRequest:
+      oneOf:
+      - type: object
+        additionalProperties: false
+        required:
+        - purpose
+        - filename
+        - content_type
+        - size_bytes
+        - consent_version
+        properties:
+          purpose:
+            type: string
+            const: food_image
+          filename:
+            type: string
+            maxLength: 180
+          content_type:
+            type: string
+            enum:
+            - image/jpeg
+            - image/png
+          size_bytes:
+            type: integer
+            minimum: 1
+            maximum: 10000000
+          consent_version:
+            type: string
+            minLength: 1
+      - type: object
+        additionalProperties: false
+        required:
+        - purpose
+        - filename
+        - content_type
+        - size_bytes
+        - consent_version
+        properties:
+          purpose:
+            type: string
+            const: lab_report
+          filename:
+            type: string
+            maxLength: 180
+          content_type:
+            type: string
+            enum:
+            - image/jpeg
+            - image/png
+            - application/pdf
+          size_bytes:
+            type: integer
+            minimum: 1
+            maximum: 25000000
+          consent_version:
+            type: string
+            minLength: 1
+      description: Lab report option MUST be rejected server-side with 403 when report_assistant_enabled=false; signed
+        URLs short-lived.
+    UploadReceipt:
+      type: object
+      additionalProperties: false
+      required:
+      - upload_id
+      - upload_url
+      - expires_at
+      properties:
+        upload_id:
+          type: string
+        upload_url:
+          type: string
+          format: uri
+        expires_at:
+          type: string
+          format: date-time
+        required_headers:
+          type: object
+          additionalProperties:
+            type: string
+    UploadCompletion:
+      type: object
+      additionalProperties: false
+      required:
+      - upload_id
+      - sha256
+      properties:
+        upload_id:
+          type: string
+        sha256:
+          type: string
+          pattern: ^[0-9a-f]{64}$
+    UploadVerified:
+      type: object
+      additionalProperties: false
+      required:
+      - upload_id
+      - status
+      properties:
+        upload_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - validating
+          - ready
+          - rejected
+        reason_code:
+          type:
+          - string
+          - 'null'
+x-implementation-rules:
+  age: Adult core app 18+; display adult BMI category only 20+ and suppress for pregnancy and other conditions needing
+    tailored assessment; final jurisdictional/product review required.
+  offline_sync: Client-generated UUID mutation IDs; stable idempotency keys; server deduplicates per user+route+key
+    and payload hash; tombstones for delete; UTC storage + IANA local timezone at display.
+  object_authorization: Never take owner/user ID from client; derive from bearer claims, verify owned object and purpose,
+    return indistinguishable 404 for foreign resources.
+  security: Rate limits, request size ceilings, secret manager, encryption at rest/transit, no raw health values in
+    logs/analytics, short-lived signed URLs, mandatory malware scanning, provenance and audit trail.
+  lab_feature_flag: report_assistant_enabled=false, refuse lab_report presign and all report endpoints server-side
+    until multi-disciplinary sign-off.
+  client_checks: Date/time validation, hydration volume/serving bounds, duration consistent with times, lower<=likely<=upper,
+    energy calculation backend only, callback schema validation and no autonomous save.
+  schema_maturity: Draft contract requires review by implementation team, codegen smoke tests and integration tests
+    before claiming production readiness.
