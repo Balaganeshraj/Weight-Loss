@@ -1,0 +1,323 @@
+VITALDAY
+Android health and daily planning application
+Product requirements and visual interface specification
+English Android application specification
+Prepared for K Balaganesh Rajah  |  28 October 2026  |  Version 1.1
+VitalDay brings nutrition, movement, recovery, personal planning and access to care into one Android app. The recommended experience starts with a clear Today screen and lets users choose how much information to connect.
+This document defines the user experience and the complete feature scope for design and development. Its companion backend specification defines data handling, AI controls, integrations, delivery stages and release tests.
+Product position
+An adult wellness companion with optional access to verified health professionals. Clinical decisions, prescribing and pharmacy dispensing remain with appropriately licensed professionals. The working name VitalDay needs trademark and store availability checks before branding is final.
+What the handoff contains
+Complete feature requirements and key user journeys in English.
+Twenty four original screen designs based on the supplied visual references.
+Shared navigation, accessibility rules and screen state requirements.
+A phased release scope that preserves the full product vision.
+All profiles, values, food totals and provider examples in the interface designs are fictional demonstration content. The screens describe intended behavior; they are not a functioning Android application.
+Product scope and release structure
+Launch assumption: adults aged 18 and over in Sri Lanka, English interface, LKR for provider fees, and Asia Colombo as the initial time zone. Geography, currency and time zone must remain configurable. Sinhala and Tamil can follow without changing the data model.
+Stage
+Included capability
+Dependency
+A  Daily wellness
+Today, manual food and water logs, recipes, exercise library, planner, local reminders, sleep check in, privacy controls
+Approved content and tested Android application
+B  Connected intelligence
+Health Connect, food photo estimation, report extraction and explanation, AI coaching, external music links
+Consents, data sources, AI evaluation and device testing
+C  Access to care
+Verified doctors, appointments, paid secure audio or video, prescriptions and partner pharmacy requests
+Provider contracts, payment operations, local legal review and care staffing
+D  Extended services
+Wear OS companion, additional vendor connections, moderated community, caregiver sharing and calendar synchronization
+Separate validation and partner approvals
+
+Full product behavior
+Users can complete core tracking without a watch, location access, AI consent or a paid subscription. Missing information is shown as unavailable, never as zero. Every automated suggestion explains its inputs and can be dismissed or changed.
+Commercial model
+Proposed tiers are free daily tracking, a paid wellness plan for approved advanced features, and separately priced clinical services. Doctor charges, cancellation rules and pharmacy costs are shown before commitment. The application must not rank medical care by commission without disclosure.
+Scope boundaries
+The app must not claim universal wearable pairing, guaranteed real time monitoring, automatic diagnosis from a blood report, precise nutrients from a photo, unrestricted music streaming or guaranteed 24 hour clinician access. These limits appear in the relevant user flows.
+Navigation and screen inventory
+Use five labelled bottom destinations. Profile, device connections, reports, privacy and notification settings are available from the Today header. The AI coach is a persistent optional action and must not displace the current task.
+Area
+Primary screens
+Secondary screens
+Today
+Daily overview, health trends, insight detail
+Quick add sheet, habit journal, notification inbox, profile
+Food
+Food diary, search, camera review, meal plan
+Barcode scan, recipes, cooking steps, shopping list, targets
+Move
+Training week, exercise library, workout player
+Gym programs, timer, exercise swap, progress, sleep and relaxation
+Plan
+Day timeline, week view, task detail, focus timer
+Follow ups, recurring tasks, calendar connections, plan preview
+Care
+Doctor search, provider profile, appointments
+Secure consultation, report vault, prescriptions, pharmacy requests
+
+Additional flows
+Authentication covers account creation, sign in, verification, recovery and optional biometric unlock. Onboarding collects goals, preferred activity, dietary preferences, allergies, optional health limitations, units and notification choices. Device and location permissions are requested when a user starts the corresponding feature.
+Global quick add
+A labelled Add action opens Food, Photo, Water, Workout, Task, Report and Medication. Each action opens a focused form, preserves drafts on accidental back navigation, and confirms success with an Undo option where reversal is safe.
+Provider and administration interfaces
+The mobile app requires companion staff portals. Clinicians manage availability, fees, patient consent, appointment notes and approved prescriptions. Pharmacists review prescriptions and stock requests. Administrators verify providers, manage content and complaints, and inspect access logs under role restrictions.
+Visual design and accessible Android behavior
+The supplied fitness references establish the main direction: near black backgrounds, lime primary controls, soft pastel cards, circular progress and compact calendar strips. The parenting reference contributes clear section grouping; the habit references contribute quick capture and journal concepts. Use original assets and Android system patterns rather than copying reference branding or iPhone hardware.
+Token
+Specification
+Dark palette
+Background #101510; surface #20271F; text #F6F8F1; secondary #B4BEAE
+Semantic palette
+Primary lime #D4F568; food teal #BCE9DE; recovery lilac #D9D0F2; attention amber #FFDBA4
+Typography
+Production font Roboto or a licensed equivalent; title 28 sp; body 16 sp; supporting text 14 sp; captions at least 12 sp
+Spacing and shape
+4, 8, 12, 16, 24 and 32 dp spacing; cards 20 dp radius; hero cards 28 dp; controls at least 48 dp touch target
+Light mode
+Off white canvas, dark text and the same semantic accents; follow system setting with a manual override
+
+Accessibility requirements
+Support TalkBack, logical reading order, labelled icons and meaningful chart summaries. All features must work without a colour distinction.
+Verify WCAG AA contrast targets of 4.5 to 1 for normal text and 3 to 1 for large text. Reflow at 200 percent font size and preserve complete button labels.
+Respect reduced motion, system insets, Android back behavior and keyboard access on larger screens. Offer captions and transcripts for guided content.
+Use neutral language for weight, food and missed goals. Offer a mode that hides calorie and weight displays. Never punish a broken streak.
+Layout rules
+Use a 16 to 24 dp screen margin and one dominant action per screen. Keep critical actions clear of the bottom navigation. Every card shows units, relevant date and source. Charts support day, week and month views with an accessible text equivalent.
+Tracking nutrition and healthier cooking
+Food diary and targets
+Users add food through search, manual entry, barcode lookup, favourites, recent meals, recipes or a camera. Entries include meal time, food identity, cooked or raw state, portion in grams or a mapped household measure, nutrition source and confidence. Editing or deleting a meal recalculates day totals without counting both a recipe and its ingredients.
+Track energy, protein, carbohydrate, fat, fibre and sodium where known. Unknown nutrients remain unknown. Keep intake separate from exercise energy; avoid automatically increasing food allowances by wearable estimates. Offer a dietitian reviewed goal calculator with visible assumptions and a manual target option. Do not generate weight loss targets for pregnancy, eating disorder concerns or complex medical conditions without appropriate professional input.
+Food photo workflow
+Choose or capture photo → review privacy consent → identify candidate foods → ask about portion, oil, sauces and cooking method → match a nutrient source → display editable estimates → confirm → save. Photos must never be presented as exact measurements or used to certify absence of an allergen. Unsupported dishes can always be entered manually.
+Recipes and food to limit
+Recipes contain ingredients by weight, servings, preparation time, numbered cooking steps, allergens, nutrition per serving and content reviewer. Local examples can include rice and curry, dhal, string hoppers and roti, with portion and preparation variants validated by a dietitian. Broad food advice focuses on preferences, declared allergies and clinician approved restrictions rather than declaring ordinary foods universally bad.
+Healthier cooking suggestions can explain measuring oil, adding vegetables, selecting a cooking method or adjusting a serving. Each substitution recalculates nutrition and checks known allergens. The app must not promise that a recipe treats disease or suggest potassium, protein or other condition specific restrictions solely from AI interpretation of a laboratory value.
+Meal planning and shopping
+Plan meals by schedule, budget, dietary pattern, cooking equipment and available ingredients. Generate a consolidated shopping list with editable quantities and substitutions. A user approves the plan before it changes their diary or calendar; planned meals count toward intake only after being logged as eaten.
+Exercise gym recovery and medication
+Personal exercise program
+Collect experience, available equipment, days per week, preferred duration, goals and optional limitations. A reviewed program template defines warm up, exercise sequence, sets, repetitions or time, rest, progression and recovery days. Provide home and gym variants, technique demonstrations, alternatives and a way to mark an exercise unsuitable.
+Before starting, show session intensity and stop instructions. During a workout, users can pause, skip, swap, change load, log exertion and finish early. Preserve completed sets after interruption. A session summary separates completion, duration and estimated energy. Pain, dizziness or concerning symptoms stop progression and direct the user toward appropriate care.
+Sleep and recovery
+Import sleep sessions with device source and last sync, or accept a manual sleep diary. Distinguish time in bed, asleep time, naps and stages only when supplied. Never infer a sleep disorder or claim measurement of sleep from a phone without a validated source. Users can correct bedtime, wake time and how rested they feel.
+A recovery suggestion can offer a shorter session, an easier workout or protected rest time when recent data and self reports support it. Show the baseline and uncertainty. The user accepts any schedule change. Do not create a medical readiness score before its clinical purpose, validation and permitted use have been established.
+Meditation and relaxation music
+Include breathing exercises, guided relaxation, brief healthy living talks and an optional text to speech coach. Provide stop and skip controls and instructions that never require breath holding. Spotify and YouTube Music open curated external playlists in their own services; unavailable links have a replacement or a neutral fallback. Own or license any audio played inside the application.
+Medication reminders
+Users or clinicians enter the medicine name, strength, route, prescribed instructions and reminder time. Track taken, skipped and snoozed without changing doses. For a missed dose, refer to the prescribed guidance or pharmacist; never recommend doubling. A reminder is an aid and cannot guarantee delivery or adherence. Refill requests use the pharmacy review flow.
+Reports health insights and alerts
+Blood report intake
+Accept PDF and image uploads with a clear ownership and processing consent. Preserve the original securely. Extract patient label, sample date, analyte, result, unit, reference interval and laboratory flag. Users verify every clinically relevant field against the original before an explanation is generated. Low confidence extraction blocks automated comparisons.
+The report screen explains what a test generally measures, identifies values outside the report supplied interval, and prepares questions for a professional. It must preserve lab specific units and ranges and identify unsupported conversions. Trends compare compatible analytes, units and methods; the app warns when reports cannot be compared reliably.
+Professional follow up
+A user can choose a verified clinician and share selected reports for a stated purpose and expiry. A report does not produce an automatic diagnosis, medicine recommendation or disease specific exercise or diet treatment. Clinician reviewed educational content may explain general next steps. Missing or apparently normal results must never become a reassurance that a person is healthy.
+Alert levels
+Level
+Example and behavior
+Routine
+A water or movement reminder follows the chosen schedule and quiet hours.
+Wellness suggestion
+An unusual pattern or a sleep goal gap shows source, freshness and a gentle suggested action.
+Clinical follow up
+A verified report flag or clinician rule offers contact with a provider under a reviewed protocol.
+Urgent symptoms
+User reported concerning symptoms open locally reviewed urgent help guidance without waiting for payment or AI. Emergency numbers are verified for the launch region before release.
+
+Notification controls
+Provide separate channels for tasks, medication, activity, appointments and insights. Let users choose frequency, quiet hours, lock screen privacy and sound. Group duplicates and record delivery attempts separately from acknowledgement. The app is not an emergency monitoring service and must not promise that a clinician is watching incoming wearable data at all times.
+Planning work and useful AI support
+Work calendar and quick follow ups
+Tasks include title, note, project, priority, due date, planned duration, status and recurrence. The day view combines work blocks, meals, exercise, medicine reminders and appointments. Users can complete, defer or reschedule quickly. Dependencies and fixed appointments prevent an AI planner from creating overlapping commitments.
+The focus timer supports pause, resume, break intervals and actual time spent. Quick follow ups capture a note, contact reference or next action without losing the active timer. Calendar integration is optional and requires explicit account permission. Calendar changes and invitations are previewed, and the app never sends messages to contacts automatically.
+How AI is used
+Capability
+Input
+User control
+Food assistant
+Food photo, portion confirmation and nutrient database
+Edit candidate foods and approve entry
+Report explainer
+Verified report fields and reviewed educational material
+Inspect source and choose clinician sharing
+Daily planning
+Goals, available time, self reports and recent allowed metrics
+Review before moving or creating tasks
+Workout support
+Reviewed templates, equipment and declared limitations
+Choose alternatives and approve progression
+Conversation and voice
+User question and separately permitted context
+View sources, stop speech and delete history
+
+Personal suggestions with restraint
+The coach can propose an achievable next step, such as moving a workout to a free slot or preparing a simpler dinner. Show Why this suggestion with the data source and timestamp. Never use guilt, fear or disease predictions to sell an upgrade. Health content in popups appears only at a useful moment and can be muted.
+AI unavailable or uncertain
+Continue manual tracking, saved routines and the local planner if AI is unavailable. Ask a focused clarification when required context is missing. Reject unsupported clinical advice, show uncertainty in plain English and provide a route to a qualified professional. Users may opt out of cloud AI while keeping their account and non AI features.
+Doctors appointments and pharmacy services
+Find a suitable professional
+Search by specialty, registration status, language, location, availability, accessibility, consultation mode and disclosed fee. Provider profiles show registration number, verified qualifications, verification date, care location and cancellation policy. The interface uses suitable or available rather than an unsupported best doctor claim. Sponsored placements are labelled separately from clinical relevance.
+Book and attend
+Choose provider → choose slot → choose mode → optionally share selected records → review total cost and terms → authorize payment → receive confirmation. The backend temporarily holds the slot and prevents duplicate bookings. A failed or late payment does not silently create an appointment. Cancellation, provider absence, call failure and refund status remain visible.
+Secure calls require participant identity checks, pre call microphone and network tests, a waiting room, restricted session tokens and a reconnect option. Recording is off by default and requires separate lawful consent if ever enabled. A visit summary and approved follow up instructions remain in the user record. After hours care is offered only when a staffed service exists.
+WhatsApp contact
+A provider may expose a verified WhatsApp contact link. The user actively opens the external conversation. Explain that it leaves the app and avoid placing blood reports, symptoms or identifiers in a prefilled URL. WhatsApp cannot act as the app payment meter or guarantee clinician availability. Paid consultations remain under the confirmed booking and billing flow.
+Nearby pharmacies and medicine requests
+With optional foreground location or a manually entered area, show verified partner pharmacies and their stated hours. Users request medicine availability or submit a valid prescription for pharmacist review. A pharmacy confirms stock, suitability for dispensing, item price, delivery charge and fulfillment options before payment.
+Prescription only medicines require authorized review under the local dispensing rules. No automatic substitution, dosage change or dispensing approval by AI. Orders support clarification, rejection, cancellation, refund, pickup or delivery tracking and a receipt. If there is no pharmacy partner, show contact and directions only; do not simulate checkout or invent live stock.
+User journeys and required interface states
+Journey
+Success condition
+Failure or recovery
+Start without a wearable
+Choose goals and reach a usable Today screen
+Skip optional fields; show manual entry
+Log a photographed meal
+Confirm portions and save once to the correct day
+Retake unclear image; edit candidates; manual fallback
+Review a blood report
+Verify units and results before explanation
+Unreadable, encrypted or inconsistent files request correction
+Finish a workout
+Save completed sets and update weekly progress
+Pause, process restart and partial completion preserved
+Accept a lighter daily plan
+Preview changes, preserve appointments and approve
+Missing sleep data blocks sleep based reasoning
+Book a doctor
+Exactly one paid booking for one available slot
+Expired hold, duplicate payment or provider cancellation reconciled
+Order a medicine
+Pharmacist confirms valid order before payment
+Invalid prescription, unavailable stock or refusal explained
+Delete account
+Stop processing and show export and deletion status
+Legally retained clinical records explained separately
+
+State contract for every screen
+Design loading, empty, permission denied, unavailable, offline, validation error, server error, success and stale data states. The specific recovery action must remain visible. Do not use an endless spinner. Every date sensitive view explains its time zone where ambiguity matters.
+Examples of final English microcopy
+Photo review: This is an estimate. Check the food and portion before adding.
+Device unavailable: No recent sleep data. Add it manually or check your connection.
+Report review: Please confirm the value, unit and lab range from the original report.
+Plan preview: Move your workout to 18:30? Your appointment will stay at 17:00.
+Notification disabled: Reminders are off on this phone. Open notification settings to enable them.
+Touch feedback and animated numbers
+Version 1.1 adds small, purposeful interaction effects. Every icon action has a text label or an accessible name and a minimum 48 dp target. The visible icon can remain 20 to 24 dp inside that larger target. Android uses Compose animation and Material indications; CSS and JavaScript are supplied for the companion web preview and future web portals.
+Interaction
+Motion specification
+Behavior
+Touch down
+120 ms; scale from 1.00 to 0.98
+Release returns to 1.00 in 160 ms; action fires once
+Ripple
+One bounded ripple, about 300 ms
+Use the Material ripple in Android; never stack two ripples
+Navigation selection
+180 to 220 ms colour and indicator change
+Keep destination labels visible; avoid bouncing the entire screen
+Confirmed number change
+650 ms ease out; fixed width tabular digits
+Animate a known previous value to the confirmed new value
+First load
+Skeleton or unavailable state until data exists
+Do not show a fabricated zero while waiting for a device or API
+Sync activity
+Indeterminate icon motion with a text status
+No fake completion percentage; preserve last confirmed readings
+Success
+One short check transition after a confirmed result
+Motion never determines whether a backend operation succeeded
+
+Where number animation is appropriate
+Steps, water totals, logged food totals, workout totals and progress rings may animate after a confirmed change. Display the unit and date throughout. A food diary number changes only after a food entry changes; a wearable sync must not change food intake. Laboratory values, medicine doses, payment amounts and urgent alerts appear immediately and remain stable.
+Accessibility and comfort
+Respect the operating system motion preference and an in app Reduce motion setting. Disable scale, count up, shimmer and rotation when motion is reduced. Show the final number immediately with a static loading label. Screen readers announce one final result rather than each animation frame. Haptics are optional and respect system preferences. No flashing or repeated celebratory loops.
+Friendly action feedback
+Use clear verbs such as Connect device, Sync here, Try again and Manage data. A disabled control explains why it is unavailable. Prevent duplicate submissions during an active request, preserve drafts after an error, and confirm the action in the same place where it started.
+Connect a fitness device and sync here
+Today now includes a visible fitness connection action. Before setup, show Connect your fitness device and a short explanation of the useful data. After connection, show Sync here, the source name and the last successful synchronization time. Devices and data remains the detailed management destination.
+Connection journey
+Connect your fitness device → check device and Health Connect availability → explain the companion app requirement → choose data types → show Android permission screen → read allowed records on the phone → optionally upload a separately consented subset → show per type results. Users can choose Not now or continue with manual entry at every optional step.
+State
+What the user sees
+Action
+Not connected
+Connect your fitness device; no live device claim
+Connect and sync here or Not now
+Setup required
+Install or update Health Connect, or open the source app
+Open setup; return to retry
+Permission needed
+Explain each optional data type
+Review Android permissions
+Syncing
+Reading activity or Checking sleep; saved values remain visible
+Cancel the current sync
+Up to date
+Updated record count and actual completion time
+Done or Sync here
+Partial update
+Successful types and failed types listed separately
+Retry failed types or Manage data
+No new data
+Connection worked but there were no new records
+Keep prior values and show their original timestamps
+Failed or offline
+Plain English reason and last successful sync
+Try again; no duplicate job
+
+Control and trust
+A connection does not guarantee that every watch supports sleep, heart rate or continuous monitoring. Explain that the wearable usually syncs to its own companion app first. Do not promise universal automatic pairing. Cancelling a sync keeps committed records and stops pending work where possible. Disconnect stops future imports; deleting already imported data is a separate explicit choice.
+Design assets and working preview
+The updated package contains 36 editable SVG icons, 288 transparent PNG exports, 36 matching Android vector files, a device illustration and CSS and JavaScript examples. The standalone interaction preview demonstrates tap feedback, number transitions and a simulated permission and sync journey. It never accesses a real wearable or health account.
+Getting started
+
+Onboarding offers a short path to a useful daily plan. Personal health questions remain optional.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings
+Today and nutrition
+
+Today prioritizes one next action. Nutrition separates recorded intake from editable daily targets.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings
+Photo review and recipes
+
+Food estimates require confirmation. Recipes explain ingredients, allergens and practical cooking changes.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings
+Training and exercise
+
+Users review intensity before starting and can pause, adapt or stop an exercise safely.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings
+Recovery and planning
+
+Recovery suggestions and the work calendar fit together without automatically moving commitments.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings
+Focus and reports
+
+A persistent focus session saves progress. Health records remain private until selected for sharing.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings
+Report review and care
+
+Results require field confirmation. Provider search supports meaningful filters and verified credentials.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings
+Booking and consultation
+
+Fees and consent precede booking. The call has a secure waiting room and a clear appointment identity.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings
+Pharmacy and AI coach
+
+A medicine request requires pharmacy confirmation. AI suggestions disclose their data and require approval.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings
+Device control and light theme
+
+Device permissions remain granular. A light theme supports system preferences and readable health data.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings
+Connect and choose data
+
+Connect your fitness device explains setup and optional permissions before any data is read.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings
+Sync and completion
+
+Saved values stay visible during sync. Completion shows the actual updated records and freshness.
+Illustrative interface designs  |  Fictional data  |  Final Android layouts must reflow for font and device settings

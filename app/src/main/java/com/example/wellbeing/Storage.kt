@@ -83,14 +83,17 @@ class LocalRepository(context: Context, databaseName: String = "wellbeing.db") :
         require(WellnessMath.valid(entry))
         val revision = (db.records().find(entry.id)?.revision ?: 0) + 1
         db.records().put(StoredRecord(entry.id, vault.seal(entry.id, entry.json().toString()), revision))
-        if (entry.kind != Kind.TIMER) enqueue(entry.id, "UPSERT", revision, entry)
+        if (entry.kind !in setOf(Kind.TIMER, Kind.DEVICE_SNAPSHOT)) enqueue(entry.id, "UPSERT", revision, entry)
     }
     override suspend fun delete(id: String) = db.withTransaction {
         val previous = db.records().find(id)
         db.records().delete(id)
-        if (previous != null && id != "timer") enqueue(id, "DELETE", previous.revision + 1)
+        if (previous != null && entryFromJson(JSONObject(vault.open(id, previous.sealed))).kind !in setOf(Kind.TIMER, Kind.DEVICE_SNAPSHOT)) enqueue(id, "DELETE", previous.revision + 1)
     }
-    override suspend fun finishSession(entry: Entry) = db.withTransaction { save(entry); db.records().delete("timer") }
+    override suspend fun finishSession(entry: Entry, timerId: String) = db.withTransaction {
+        require(timerId in setOf("timer", "focus-timer", "workout-draft"))
+        save(entry); db.records().delete(timerId)
+    }
     override suspend fun clear() = db.withTransaction { db.records().clear(); db.records().clearOutbox() }
     override suspend fun pending(limit: Int): List<PendingChange> = db.records().pending(limit.coerceIn(1, 100)).map {
         val payload = vault.open(it.mutationId, it.sealed)

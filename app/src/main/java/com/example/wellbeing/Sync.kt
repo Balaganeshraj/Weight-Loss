@@ -7,7 +7,7 @@ interface JournalRepository {
     val entries: Flow<List<Entry>>
     suspend fun save(entry: Entry)
     suspend fun delete(id: String)
-    suspend fun finishSession(entry: Entry)
+    suspend fun finishSession(entry: Entry, timerId: String = "timer")
     suspend fun clear()
 }
 

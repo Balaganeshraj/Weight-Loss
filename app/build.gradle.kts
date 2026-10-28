@@ -11,8 +11,8 @@ android {
         applicationId = providers.gradleProperty("wellbeing.applicationId").orElse("com.example.wellbeing.offline").get()
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.0.0-rc1"
+        versionCode = 3
+        versionName = "1.1.0-vitalday-rc1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { compose = true }
@@ -69,6 +69,7 @@ dependencies {
     ksp("androidx.room:room-compiler:2.7.1")
     implementation("androidx.datastore:datastore-preferences:1.1.7")
     implementation("androidx.work:work-runtime-ktx:2.10.1")
+    implementation("androidx.health.connect:connect-client:1.1.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")

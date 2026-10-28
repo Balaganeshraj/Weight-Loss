@@ -1,0 +1,473 @@
+VITALDAY
+Android application backend and delivery
+Architecture data security AI integrations and acceptance criteria
+English Android application specification
+Prepared for K Balaganesh Rajah  |  28 October 2026  |  Version 1.1
+Build VitalDay as a native Android client supported by a secure modular backend. Keep wellness coaching, clinical services, commercial payments and personal work planning in separate permission domains. Share only the specific records needed for each action.
+This specification is intended for the engineering lead, Android developer, backend developer, product designer, clinical reviewer and delivery manager. It defines proposed implementation choices and release conditions. No provider account, cloud infrastructure, regulated service or production integration is provisioned by this document.
+Recommended build choices
+Kotlin and Jetpack Compose for Android, with an optional Wear OS companion.
+A modular API service with PostgreSQL, protected object storage, background jobs and dedicated integration adapters.
+A constrained AI service that uses verified structured inputs and reviewed source material.
+Separate staff portals for clinician, pharmacist, operations and content roles.
+Delivery status
+This is a product and engineering handoff. Implementation, security assessment, professional review, partner agreements and release testing are required before a production APK or Play Store launch. Estimates in this document are planning assumptions, not vendor quotes or delivery commitments.
+Companion material
+Use the Product and UI specification for navigation and visual intent. The UI asset package contains screen PNGs, design tokens and a requirements backlog suitable for importing into a project tracker.
+Decisions the product owner must finalize
+Confirm the working name, territory, Android minimum, clinical service model, partners, AI terms, retention schedule and budget before implementation contracts.
+System architecture and Android implementation
+Start with a modular monolith so transactions, access control and deployment remain manageable. Separate modules in code and data ownership, and split services only when measured load or security isolation justifies the change. The stack below is a recommendation rather than a requirement to buy specific products.
+Layer
+Proposed implementation
+Purpose
+Android
+Kotlin, Compose, ViewModel, Coroutines and Flow, Hilt
+Accessible UI, predictable state and lifecycle handling
+On device
+Room cache, DataStore settings, Android Keystore backed key handling
+Offline logs, preferences and protected session storage
+API
+TypeScript and NestJS or equivalent mature framework; REST OpenAPI contract
+Identity, nutrition, routines, reports, planner, care and orders
+Data
+Managed PostgreSQL; encrypted private object storage; Redis only for locks and short lived cache
+Transactions, records and controlled uploads
+Jobs
+Durable queue and workers; transactional outbox for events
+OCR, AI tasks, reminders, reconciliation and deletion
+Integration edge
+Provider specific adapters with timeouts and circuit breakers
+Health sync, food lookup, calendars, payments, calls and pharmacy
+Staff portals
+Role restricted web interfaces using the same authorization layer
+Clinical operations, pharmacy review, verification and support
+
+Android modules and build behavior
+Suggested modules are core designsystem, core database, core network, core permissions and feature modules for today, food, move, plan, care, reports and coach. UI state is immutable and data repositories are the only source of truth. Configuration changes must not reset timers or upload jobs. Use feature flags to disable a failing vendor or unapproved clinical capability.
+Platform support
+Propose Android 9 API 28 as the initial minimum, subject to a device survey. Health Connect requires an eligible device with Google Play services; it is built into Android 14 and later and supplied as an app on earlier supported versions. Check SDK availability at runtime. Select current stable SDK dependencies and the current Play target requirement at implementation and release, rather than locking this plan to a preview version. [S1]
+Data flow access control and trust boundaries
+End to end flow
+Android authenticates with an identity provider using an appropriate OAuth or OpenID Connect flow. The API validates the token and authorization for each object. Structured records go to PostgreSQL; uploads use short lived signed access to a private quarantine area. Workers validate files, process approved jobs and publish status through the API. The app fetches job status or receives a generic notification to refresh.
+Health Connect records first require Android permission on the phone. Cloud upload is a separate explicit purpose choice. Only a minimal consented subset reaches the server. AI receives a reduced context through the AI gateway, never direct database credentials or unrestricted access to reports, payment accounts or contacts.
+Role
+Permitted access
+Mandatory restriction
+Member
+Own logs, records, tasks, consents and bookings
+Owner identifier derived from token, never trusted from request
+Clinician
+Assigned appointment and user selected records within grant
+No access to unrelated planner tasks or historic reports
+Pharmacist
+Assigned prescription and order details
+No broad access to patient laboratory history
+Care operations
+Scheduling and support information
+Sensitive record access requires a documented exceptional process
+Content reviewer
+Draft and approved educational content
+No member health data
+System worker
+Specific job scope and record references
+Short lived service identity and logged access
+
+Consent and revocation
+Record purpose, scope, policy version, granted time, expiry and revocation for device import, cloud processing, AI, provider sharing, location, calendar and optional voice. Revocation prevents new use immediately in the authorization layer; cancel pending AI and sharing jobs. It does not automatically delete previously imported records. Offer a separate delete option and explain necessary clinical retention.
+Clinical record integrity
+Keep original uploads immutable and version corrected extractions. A clinician note is signed or finalized under their identity with an amendment history. Patients may correct self reported data but cannot silently overwrite a signed clinical record. Every share and view of a report creates a restricted audit event.
+Core data model and validation
+Entity
+Important fields and relationships
+Account and profile
+user_id UUID; preferred zone; locale; units; eligibility; profile preferences separately from authentication
+Consent and share grant
+user_id; purpose; data_scope; recipient_id; policy_version; expires_at; revoked_at
+Health record
+user_id; source_system; source_record_id; source_version; metric; numeric value and unit; start_at; end_at; offset; recorded_at; quality
+Food and meal entry
+food_id; nutrient source and version; per_100g nutrients; portion_g; meal_time; confirmed_by_user; planned versus eaten
+Recipe and meal plan
+recipe_version; ingredient quantities; yield; allergens; reviewer; scheduled meal; logged entry link
+Workout and set
+template_version; session start and end; exercise_id; sets; load unit; duration; effort; modification and completion state
+Report and lab result
+object_key; hash; sample date; OCR status; verified_at; analyte; value; unit; lab range; flag; original text; page and field position
+Task and timer
+owner; planned_start; duration; due_at; time zone; recurrence; completion; elapsed timer events; calendar link and version
+Provider and booking
+verified registration; specialty; fee currency; slot; hold_expiry; payment reference; visit state; consent references
+Prescription and order
+clinician identity; signed record; medicine instructions; pharmacy review; stock quote; fulfillment status
+Insight and AI run
+input references and freshness; model version; prompt version; policy version; output schema; sources; user action
+Payment and audit
+provider transaction_id; amount_minor; currency; state; webhook_id; actor; object; action; timestamp
+
+Use UUID identifiers, server assigned ownership and UTC instants with the original IANA time zone and offset where relevant. Store dates without times for birthdays and date only tasks. Nutrients use decimal values and explicit units; money uses integer minor units with currency. Add foreign keys, check constraints and per user indexes.
+Health source identifiers must be unique by user, source and source record. Booking locks, payment transitions and order confirmation occur in database transactions. Keep deletion tombstones and version fields for synchronized records. Do not use a generic text blob as the only storage for laboratory results or clinical authorization.
+Wearables ingestion sleep and offline sync
+Connection strategy
+Health Connect is the preferred shared Android health datastore for supported data types. It does not universally pair hardware or guarantee immediate readings. A watch normally syncs through its vendor app, which must write the required data to Health Connect. A separate Wear OS app may use Health Services for supported exercise or passive metrics. Bluetooth integrations require a known device protocol and separate testing. [S1 S2 S3]
+Device category
+Planned route
+Acceptance requirement
+Android phone
+Manual entry and supported phone activity source
+Works without a wearable; source is visible
+Wear OS watch
+Health Connect via vendor flow; later dedicated Health Services companion
+Test capability, permissions, reconnect and battery effects
+Galaxy and other supported vendors
+Vendor app to Health Connect where supported
+Publish model, firmware and metric coverage after testing
+Garmin Fitbit and other ecosystems
+Health Connect where available or approved vendor API
+Contract and current API access required; no blanket compatibility claim
+Apple Watch
+No direct Android support promised
+Allow manual imports if later designed; avoid unsupported connection flow
+
+Reliable import algorithm
+Read granted types and a change cursor; fetch updates in bounded batches. Validate timestamps, unit and origin, then upsert by source identity and version. Process deletions, advance the cursor only after a successful transaction and recover an expired cursor by controlled resync. Do not reimport the app own written records in a loop. [S2]
+For overlapping steps or activity calories, use the supported aggregation approach and source priority rather than summing duplicate devices. Preserve raw source lineage and store derived summaries separately. Do not count the same exercise energy twice. Sleep sessions cross midnight; compute duration from instants and map to a documented sleep day convention. Preserve naps and do not average overlapping stages as independent sleep.
+Offline and battery behavior
+Queue manual logs locally with a client generated request ID, then synchronize idempotently. Conflicting edits use record versions and a visible resolution path; financial and booking writes require a live server response. WorkManager schedules deferred sync within platform limits, so display last successful read and Sync now. Suppress data driven insights when measurements are stale or missing. Test permission revocation, airplane mode and process death. [S2 S3]
+Nutrition and recipe processing pipeline
+Trusted nutrition calculation
+Search a licensed food source and an editorially reviewed local food catalogue. USDA FoodData Central offers food and nutrient lookup APIs but does not guarantee full coverage of Sri Lankan dishes. Keep source identifiers, dataset type, retrieval time and nutrient basis. Never expose provider API keys inside the APK. [S4]
+For a confirmed food, nutrient amount equals grams consumed multiplied by nutrient per 100 grams divided by 100. Sum ingredients for a recipe, apply documented yield and edible portion assumptions, then divide by verified serving count. Calculations use deterministic code and compatible units; the language model does not invent numeric nutrient data. Cooking yield and local recipe variation must be reviewed.
+Image analysis job
+POST a restricted media upload → validate file → submit image job → identify candidate dishes and visible components → request missing portion and cooking details → retrieve food matches → calculate an estimate → return a structured draft → user confirms → create a meal entry. Save original photo only under the selected retention choice.
+Output field
+Validation rule
+candidate_foods
+Bounded list; each item links to a catalogue match or explicitly says unmatched
+portion and preparation
+User confirmed grams or mapped measure; identify raw versus cooked
+nutrition
+Per portion kcal and available nutrients with source; unknown remains null
+uncertainty
+Plain language cause such as unknown oil or mixed dish; no uncalibrated accuracy percentage
+allergens
+Known ingredient flags only; never claim absence based on a photo
+confirmation
+Separate user action; photo draft never updates totals automatically
+
+Food guidance and content operations
+Review local recipes, household portion mappings and substitutions with a qualified dietitian. Store editorial version, reviewer and next review date. Advice based on a declared allergy must respect the allergy even when a photo match differs. Medical diet restrictions require a clinician approved plan and cannot be inferred from one lab value. Disable photo processing independently if quality falls below the agreed evaluation threshold.
+Blood reports and clinical safety workflow
+Extraction and confirmation
+Validate MIME type by content, file size and page count; scan for malicious content and reject active or corrupted files. Quarantine files until checks pass. OCR produces a field level structured draft with original text, page coordinates and extraction confidence. Laboratory documents are untrusted data, so embedded instructions must never become AI system instructions.
+A user compares the draft with the original and confirms analyte, value, unit, lab interval, patient identity and sample date. Ambiguous decimal separators, scientific notation, absent units or impossible values require correction. Keep the original and every corrected version linked. Readability or consistency failures return a clear error instead of a fabricated explanation.
+Explain only what is supported
+A deterministic engine compares verified numeric results with the report interval where applicable. A curated content layer explains the test in general terms. AI may summarize that content and suggest questions for a professional, with citations and uncertainty. It must not prescribe treatment, infer a diagnosis, invent reference ranges or decide a safe exercise intensity from a lab result.
+Triage protocol
+A licensed clinical lead must own the symptom escalation and laboratory follow up protocol before activation. Rules identify supported tests, populations, units, recency, limitations and review intervals. Critical value alerts require a validated extraction and an approved process; the app must not act as a replacement for the laboratory or clinician critical result service. User reported urgent symptoms bypass AI and payment.
+Clinical governance and product claims
+Conduct a feature by feature intended use assessment for Sri Lanka and each expansion market, including whether any diagnostic, treatment or monitoring function requires medical device oversight. Do not rely on a disclaimer to neutralize a clinical intended use. The FDA wellness and clinical decision support guidance can inform a future US assessment but does not establish Sri Lankan compliance. [S12 S13]
+Launch gate
+A named clinical reviewer approves educational content, exclusions, alert copy and the response process. Validate representative reports across laboratories and image quality levels. Unresolved field errors or unsafe advice block release. Keep report explanation behind a feature flag until clinical and privacy reviews are complete.
+AI architecture evaluation and user control
+Constrained orchestration
+The app sends a purpose specific request to the AI gateway. The gateway enforces consent, minimizes identifiers, retrieves permitted context, selects reviewed sources and calls an approved model. It validates the structured output and applies clinical and content policy checks before returning a response. Food arithmetic and record access remain deterministic backend functions.
+Separate tools can search a food catalogue, read the user selected metrics, propose a meal plan, propose a workout or draft a task change. Each tool accepts a small schema and derives ownership from the authenticated user. AI can prepare a transaction proposal but cannot charge money, book a clinician, dispense medicine, share a report or move a calendar item without the required user confirmation.
+Suggested response contract
+Return answer_text, purpose, cited_content_versions, input_record_ids, input_freshness, limitations, suggested_actions and requires_professional_review. Tool action proposals include an expiring proposal_id and a visible change summary. Unsupported requests produce a helpful limitation and an appropriate referral path. Do not display an unexplained numerical health score.
+Evaluation programme
+Test set
+Required evidence before rollout
+Food photo set
+Weighed and reviewed local meals; error by dish, portion and image quality; failure cases and manual fallback
+Lab extraction set
+Exact analyte, value, unit and range agreement; unreadable files rejected; identity and date errors measured
+Clinical safety set
+No unreviewed diagnosis, dosing, urgent reassurance or contraindicated coaching in release blocking scenarios
+AI security set
+Prompt injection, cross user access, hidden file instructions and tool misuse attempts blocked
+Planning set
+No overlaps, lost tasks or changes to fixed commitments; timezone and recurrence tests pass
+Conversation quality
+Sources match claims, uncertainty is visible, language is respectful and hallucinations are logged
+
+Operations and cost
+Version model, prompt, policy and retrieved content. Set request limits, job timeouts and per user cost ceilings. Track latency and failure rate without exposing full reports in logs. Use feature flags, a rollback process and clinician review of reported unsafe answers. Contractually verify AI vendor retention, training use, processing location and deletion terms; do not assume zero retention.
+API conventions and core endpoint contracts
+Use versioned REST routes under /v1, JSON over TLS and a generated OpenAPI contract. Require authentication except for explicitly public catalogue data. Use cursor pagination, bounded date ranges, request IDs and a consistent error envelope containing code, message, field_errors and retryable. The API checks authorization on every referenced object.
+Route
+Input and behavior
+Main result or error
+GET /today
+date and IANA timezone; assemble consented summaries
+Cards with source and stale flags
+GET /foods
+query, optional barcode, bounded limit
+Food matches and source metadata
+POST /meal-entries
+food source, confirmed grams, meal time, client_id
+201 entry; 422 invalid portion
+POST /uploads
+purpose, content type, size, checksum
+Restricted upload instruction and upload_id
+POST /food-analyses
+upload_id and image processing consent
+202 job_id; draft estimate only
+POST /reports
+upload_id, declared report owner
+202 extraction job; quarantined until validated
+PATCH /lab-results/{id}
+corrected fields and expected_version
+Verified version or 409 conflict
+POST /workout-sessions
+template_version, planned start and modifications
+Session with durable set log
+POST /tasks
+title, planned time, duration and recurrence
+Task and version; recurrence expanded safely
+POST /ai-proposals
+purpose, explicit record references and allowed context
+Preview with proposal_id and expiry
+POST /proposals/{id}/accept
+proposal_version and user confirmation
+Approved changes or 409 stale proposal
+
+Request and response example
+A meal entry request includes client_id, food_id, portion_g 180, meal_time 2026-10-28T12:30:00+05:30, meal_type lunch and expected food version. The server derives user_id, calculates nutrient totals and returns entry_id, source_version, kcal, available macros and recorded_at. A repeated client_id with identical content returns the prior result; conflicting content returns 409.
+Use these resource names in the executable OpenAPI implementation. Support 401 expired login, 403 missing scope, 404 inaccessible record, 409 version conflict, 413 oversized file, 422 validation failure and 429 rate limited. Never return raw vendor errors or tokens to the client.
+Care booking payment and pharmacy contracts
+Route
+Contract requirement
+GET /providers and /slots
+Filter verified active providers; show real availability, price and currency
+POST /booking-holds
+Reserve slot transactionally; proposed hold expiry five minutes; idempotency key required
+POST /checkout-sessions
+Hold ID, accepted fee version and terms; return provider hosted payment flow
+POST /payment-webhooks
+Verify signature; persist unique event ID; reconcile amount, currency and booking identity
+GET /bookings/{id}
+Return authoritative appointment and payment states separately
+POST /bookings/{id}/cancel
+Enforce cancellation terms; create auditable refund request where due
+POST /consultations/{id}/token
+Short lived scoped token only for booked participant and valid session window
+POST /share-grants
+Explicit record IDs, recipient, purpose and expiry; revoke immediately
+POST /pharmacy-requests
+Selected pharmacy, requested items and optional prescription; not a paid order yet
+POST /orders/{id}/quote-acceptance
+User accepts pharmacist approved items, exact price, delivery and prescription decision
+
+Booking and payment state machines
+Booking transitions are available → held → pending payment → confirmed → checked in → completed. Alternative states include expired, cancelled and provider no show. A booking row lock or uniqueness constraint prevents two confirmations for the same slot. A valid late payment for an expired slot triggers reconciliation and refund or user chosen rebooking, never a silent conflicting confirmation.
+Payment states are created, authorized, captured, failed, refund pending, refunded and disputed. Webhook processing is idempotent and independent of the app returning from checkout. Reconcile unresolved payments daily. Store transaction references rather than card data. Clinical service transactions must use a suitable external processor rather than Google Play billing under the current policy. Separately assess wellness digital subscriptions against Play billing rules. [S9]
+Order and call recovery
+Pharmacy states are requested, clarification needed, reviewed, quoted, accepted, paid, preparing, ready, fulfilled, cancelled and refunded. Preserve pharmacist decisions and prohibit unapproved substitutions. Test call disconnect, provider absence, refund failure and user loss of connectivity. Choose a secure call vendor with suitable health data contractual terms and regional service quality; branding alone is not evidence of compliance.
+External integrations and feasible launch options
+Integration
+Initial implementation
+Production condition
+Health Connect
+Read only consented metrics first
+Permissions, data types and tested device matrix [S1 S2]
+Wear OS
+Optional later companion with Health Services
+Capability and sensor permission testing [S3]
+Food source
+Server side FoodData Central and curated local catalogue
+Source licensing, quotas, provenance and local review [S4]
+Spotify
+User initiated external playlist links
+Do not promise commercial embedded streaming; policy and quota review for any SDK extension [S5]
+YouTube Music
+Open supported links in official app or browser
+No audio extraction or unauthorized background YouTube player [S6]
+Calendar
+In app calendar first; user initiated event handoff
+Google Calendar OAuth and least privilege scopes for later sync [S7]
+WhatsApp
+Verified provider contact link without sensitive query text
+User initiates externally; no assumed record sync or paid call metering
+Doctors
+Partner onboarding with manual credential verification
+Sri Lanka Medical Council verification and service contracts; no public API assumed [S10]
+Pharmacies
+Verified directory and manual availability requests
+Dispensing, prescription, delivery and merchant review before checkout
+Payments and calls
+Vendor adapters selected after local due diligence
+LKR settlement, refunds, service availability and suitable contracts
+
+Permission and notification handling
+Request camera for capture, foreground location for nearby services, microphone for voice or calls and calendar access only when needed. Android notification permission can be denied. Offer an in app reminder list and a route to settings without nagging. Use appropriate local scheduling and WorkManager for deferred jobs; exact alarms require checking platform and policy eligibility. Delivery timing is not guaranteed across OS, device and battery states. [S14 S15]
+Unavailable partner behavior
+Vendor timeouts return a visible unavailable state and preserve the user draft. Do not fabricate provider slots, pharmacy stock, sleep metrics or nutrient data. Manual data entry and local planning remain useful during outages. Each adapter has a sandbox mode, timeout, retry policy, quota monitor and a feature flag.
+Security privacy and retention requirements
+Security implementation
+Use modern TLS, encrypted database and object storage, protected backups and managed keys. Store long lived service secrets in a vault and never in the APK.
+Apply object ownership and recipient grant checks at the service boundary. Require multi factor authentication for clinical and administration accounts. Log privileged changes and restrict report access.
+Use short lived upload and download access, content validation, malware scanning, redacted logs, dependency scanning and tested database migrations. Avoid sensitive data in analytics, crash logs, URLs and push messages.
+Separate production and test environments. Use synthetic test records. Do not copy real blood reports into development or AI evaluation without a lawful approved process.
+Retention schedule to finalize
+Record type
+Proposed handling before local approval
+Meal photos
+Offer delete after confirmed entry; temporary failed uploads expire within 24 hours
+AI processing copies
+Minimize and delete after job under vendor contract; no training use without separate permission
+Personal logs and tasks
+User controlled deletion and export; proposed active account retention only
+Reports and clinical records
+Separate patient uploaded copies from legally retained clinical records; clinical retention set with local counsel and providers
+Deleted account
+Stop access immediately; proposed deletion from active systems within 30 days and backup expiry within 90 days, except documented legal holds
+Audit and financial records
+Restricted retention by documented legal and operational purpose; no indefinite default
+
+Sri Lanka readiness
+The Data Protection Authority publishes the PDPA, its 2025 amendment and subsequent gazettes. Before launch, local counsel must confirm the provisions and commencement dates that apply, lawful grounds for sensitive health processing, cross border processing, required notices and data subject procedures. The plan does not claim a fixed enforcement date from an older announcement or automatic legal compliance. [S11]
+User rights and incident response
+Provide data export, correction, consent review, share revocation and account deletion with identity verification. Map deletion to files, derived summaries, queues, AI copies and downstream partners. Test backups restoring without resurrecting deleted records. Assign an incident owner, vendor escalation contacts and the jurisdiction specific notification process before collecting live health records.
+Quality targets and acceptance tests
+The figures below are proposed engineering release targets to refine during pilot testing. They are not medical performance claims. Use representative midrange Android phones and Sri Lankan connectivity conditions.
+Area
+Acceptance evidence
+Application quality
+At least 99.5 percent crash free sessions in pilot; main cached screen visible within two seconds at p95 on the agreed test device
+API and jobs
+Core read endpoint p95 below 800 ms at agreed pilot load; job progress visible; no unbounded spinner or retry loop
+Reliability
+Proposed 99.9 percent monthly core API target; recovery point 24 hours and recovery time four hours; restore drill completed
+Nutrition
+Weighed fixtures recalculate deterministic nutrient totals exactly within rounding rules; unknown fields remain null; repeated entries do not double count
+Devices
+Denied or revoked permissions, duplicate sources, deletion, stale data, sleep over midnight and expired cursors handled correctly
+Reports and AI
+No explanation before field confirmation; all release blocking clinical and cross account security scenarios pass
+Planner
+Recurrence, daylight saving travel, timer interruption and sync conflict tests pass; AI never moves a fixed appointment without approval
+Payments
+Two users cannot book one slot; repeated callbacks cannot double charge; expired holds and refunds reconcile correctly
+Accessibility
+TalkBack and 200 percent font checks pass; targets at least 48 dp; normal text contrast meets 4.5 to 1
+Privacy
+Revocation blocks next processing request; export and deletion verified; logs and notifications contain no sensitive report contents
+
+Required validation layers
+Use unit tests for calculations and permission decisions, integration tests for database and vendor contracts, instrumented Android tests for critical journeys and manual clinical and accessibility review. Test the lowest supported Android version, current release, major battery restriction variants, low storage, slow network and process restart. Run an independent security assessment before paid clinical or pharmacy services.
+Release blocking defects
+Block launch for cross user data access, unsafe clinical output, double charge, unauthorized report sharing, incorrect units, silent failed deletion, duplicate confirmed slots or a broken urgent symptom route. Fix and retest the affected flow rather than accepting these as cosmetic issues.
+Roadmap team operations and launch checklist
+Indicative delivery sequence
+Phase
+Planning duration
+Completion evidence
+Discovery and validation
+2 to 3 weeks
+Confirmed launch scope, clinical owner, partner feasibility, user testing and content plan
+Design and platform foundation
+3 to 4 weeks
+Reviewed UI, data model, identity, permissions, CI and staging environment
+Stage A wellness build
+8 to 12 weeks
+Tracking, planner, routines, reminders and privacy journeys tested
+Stage B intelligence
+6 to 10 additional weeks
+Verified device sync, evaluated AI, food photos and gated report explanation
+Stage C clinical commerce
+8 to 12 additional weeks after partner readiness
+Verified providers, payments, calls, pharmacy operations and clinical sign off
+Pilot and release
+3 to 4 weeks per launch stage
+Support coverage, observed reliability and release criteria met
+
+These are preliminary effort windows for a dedicated cross functional team; some work can overlap, while partner and regulatory work can extend the calendar. The full vision is a multi stage programme, not a small single developer build. Do not convert the windows into a guaranteed launch date.
+Recommended roles and cost drivers
+Plan for product ownership, product design, one or two Android engineers, one or two backend engineers, QA, part time infrastructure and security support, a clinical lead and a dietitian. Clinical commerce also needs provider onboarding, pharmacy operations, finance reconciliation and customer support. Cost drivers include team effort, AI jobs, media storage, call minutes, payment fees, content licensing and partner operations. Obtain quotes using this specification rather than relying on invented fixed pricing.
+Before each stage goes live
+Confirm feature inventory, clinical intended use, content review and privacy notices for that stage.
+Approve provider and pharmacy contracts, customer support, refunds and complaint handling when applicable.
+Complete Play health declarations, data safety details, account deletion flow and permission disclosures. [S8 S9]
+Pass acceptance tests, production restore drill, monitoring and rollback rehearsal.
+Publish actual compatibility, geographic coverage, service hours and pricing. Keep unavailable features clearly gated.
+Asset formats and native animation implementation
+The version 1.1 asset kit separates source vectors, raster exports and implementation examples. Use vector icons for navigation and controls. Use photos or illustrations for recipe covers, workout demonstrations and onboarding, with rights and meaningful alternative text managed in the content system. Manufacturer logos require approved assets and usage rights.
+File or format
+Use
+Implementation rule
+icons/svg
+36 editable 24 by 24 icons
+SVG currentColor inherits the web control colour; hide decorative icons from assistive technology
+icons/png
+Transparent ink and light variants at 24, 48, 72 and 96 px
+Select a density appropriate export; preserve aspect ratio and transparency
+android/drawable
+36 VectorDrawable XML files
+Place in the Android drawable resource folder and tint through Compose
+illustrations
+Editable device SVG plus PNG and WebP
+Use as artwork rather than a tap target; do not infer real compatibility
+motion.css and motion.js
+Web interaction reference
+A native Android screen does not run CSS; translate behavior into Compose
+android/VitalMotion.kt
+Compose button and number examples
+Integration samples only; wire to real ViewModel state and validate in an Android module
+asset_manifest.json
+Filename, semantic label and size inventory
+Keep stable kebab case filenames; map them explicitly to Android resource names
+
+Native behavior
+Use a single Material ripple and collect the pressed interaction to animate a subtle scale. For confirmed number changes, animate from the last committed value and format with locale aware separators. Keep a stable text width and tabular digits. Hoist animation state outside recycled list items so scrolling does not restart it. Respect reduced motion and platform animator settings. [S16 S17]
+Performance and asset loading
+Cache assets, decode large images to their display size and reserve the image aspect ratio before loading. Animate transform and opacity for web controls. Avoid layout driven digit widths, decoding full size photos for a small icon or continuously animating every dashboard card. Cancel old number animations when new data arrives and settle to the current confirmed target when the screen becomes inactive.
+Sync state contracts and interaction acceptance
+State ownership and data freshness
+The device repository owns availability, granted scopes, active sync identity, last attempt, last successful import and per type results. Read Health Connect on the authorized Android device rather than pretending that a cloud API can pair arbitrary hardware. Recheck scope immediately before every read. [S1 S2]
+If server progress tracking is needed, POST /v1/sync-sessions creates an idempotent session for an authorized phone import. GET /v1/sync-sessions/{id} returns source, status, started_at, finished_at, last_success_at, imported_counts and failed_types. PATCH cancellation requests cancellation; it cannot undo data already committed. Server state covers uploaded batches only and does not prove that the watch itself completed its upstream sync.
+Condition
+Required result
+One type denied
+Import only allowed types. Denied activity permission cannot update steps.
+Double tap on Sync here
+Create or resume one active session; disable duplicate triggers.
+Partial success
+Commit successful batches and show failed types. Do not label all metrics up to date.
+No new source records
+Retain values and original source timestamps; show No new data.
+Permission revoked mid sync
+Stop unauthorized reads; cancel pending work for that type.
+Failure or offline
+Retain last confirmed values, expose retry and preserve source identity.
+New target during animation
+Cancel the old visual interpolation; finish at the latest confirmed target.
+Reduced motion or screen reader
+Immediate stable number and one semantic result announcement.
+
+Interaction acceptance tests
+Press and release outside a target must cancel the action. A rapid double tap cannot create duplicate writes.
+Keyboard focus remains visible, dialogs restore focus to the opener, and labels survive 200 percent text scaling.
+Numbers use the correct unit and day, never change underlying data through interpolation, and do not animate unverified medical values.
+Granting sleep only does not authorize steps. Wearable sync cannot change calories recorded as food intake.
+Skeletons and spinners cannot continue indefinitely after a failure. A real timeout produces an explicit recovery state.
+Verify Android animations, 60 Hz performance and reduced motion on representative physical devices. Verify the CSS preview on mobile and desktop browsers.
+Verified source register
+Primary documentation checked on 28 October 2026. Integration policies and local obligations must be rechecked before implementation contracts and each release. Source labels are used in the relevant sections; the technology choices and delivery estimates remain recommendations.
+S1  Android Health Connect availabilityhttps://developer.android.com/health-and-fitness/health-connect/availability
+S2  Android Health Connect reading and sleep guideshttps://developer.android.com/health-and-fitness/health-connect/read-data
+S3  Android Health Services on Wear OShttps://developer.android.com/health-and-fitness/health-services
+S4  USDA FoodData Central API guidehttps://fdc.nal.usda.gov/api-guide/
+S5  Spotify Developer Policyhttps://developer.spotify.com/policy
+S6  YouTube developer policy guidehttps://developers.google.com/youtube/terms/developer-policies-guide
+S7  Google Calendar authorization scopeshttps://developers.google.com/workspace/calendar/api/auth
+S8  Google Play Health apps declarationhttps://support.google.com/googleplay/android-developer/answer/14738291
+S9  Google Play Health content and serviceshttps://support.google.com/googleplay/android-developer/answer/16679511
+S10  Sri Lanka Medical Council serviceshttps://slmc.gov.lk/en/services/medical-practitioners
+S11  Sri Lanka Data Protection Authority legislation and gazetteshttps://dpa.gov.lk/guidelines.php
+S12  FDA General Wellness guidance for potential US assessmenthttps://www.fda.gov/regulatory-information/search-fda-guidance-documents/general-wellness-policy-low-risk-devices
+S13  FDA Clinical Decision Support Software guidance for potential US assessmenthttps://www.fda.gov/regulatory-information/search-fda-guidance-documents/clinical-decision-support-software
+S14  Android notification runtime permissionhttps://developer.android.com/develop/ui/compose/notifications/notification-permission
+S15  Android alarm schedulinghttps://developer.android.com/develop/background-work/services/alarms
+S16  Android Compose animation quick guidehttps://developer.android.com/develop/ui/compose/animation/quick-guide
+S17  W3C reduced motion technique C39https://www.w3.org/WAI/WCAG22/Techniques/css/C39

@@ -1,0 +1,81 @@
+ID,Module,Stage,Priority,Requirement,Acceptance criterion,Dependency
+VD-001,Account,A,Must,Sign up sign in recover account and optional biometric unlock,Expired sessions require sign in without exposing cached health data,Identity provider
+VD-002,Account,A,Must,Provide adult eligibility and optional onboarding goals,A user can skip optional health questions and reach Today,Core API
+VD-003,Account,A,Must,Allow units locale timezone and notification preferences,Changing units preserves stored numeric meaning and time instants,Core API
+VD-004,Account,A,Must,Support export consent review and account deletion,Export contains authorized records and deletion stops future processing,Core API
+VD-005,UI,A,Must,Five labelled navigation destinations with global quick add,Every primary feature is reachable from its specified destination,Compose design system
+VD-006,UI,A,Must,Accessible dark and light themes,TalkBack font scaling contrast and 48 dp target checks pass,Design review
+VD-007,UI,A,Must,Every screen supports empty error offline stale and permission denied states,Each unavailable state gives a useful recovery action,Design review
+VD-008,Today,A,Must,Daily overview of nutrition activity sleep and planned tasks,Unavailable values show unavailable rather than zero,Core API
+VD-009,Today,A,Must,Show one dismissible next step and explain its reason,Suggestion exposes source and time and respects opt out,Reviewed wellness content
+VD-010,Food,A,Must,Search and manually enter food with grams and preparation state,Confirmed amount recalculates nutrient totals with explicit source,Food catalogue
+VD-011,Food,A,Must,Log edit delete favourites recent meals and water,Undoable changes update only the correct day totals,Core API
+VD-012,Food,A,Must,Allow barcode lookup with manual fallback,Unmatched barcode never invents a food match,Food catalogue
+VD-013,Food,A,Must,Track energy protein carbs fat and available fibre and sodium,Unknown nutrient fields remain null rather than zero,Core API
+VD-014,Food,A,Must,Maintain reviewed editable nutrition targets,Restricted populations do not receive unsupervised weight loss targets,Dietitian review
+VD-015,Food,B,Must,Capture or choose photo with separate AI processing consent,Denied camera permission still allows manual entry,Camera and AI gateway
+VD-016,Food,B,Must,Return editable food candidates and portion questions,No photo estimate updates the diary until the user confirms,AI and nutrient catalogue
+VD-017,Recipes,A,Must,Provide reviewed recipes with weights yield allergens and numbered steps,Per serving totals match the ingredient calculation,Dietitian content
+VD-018,Recipes,A,Must,Offer cooking changes and ingredient substitutions,Changes recalculate estimates and retain allergy warnings,Content and nutrient catalogue
+VD-019,Recipes,A,Must,Build meal plan and consolidated shopping list,Planned meals are not counted as eaten until logged,Core API
+VD-020,Move,A,Must,Select programs by goal experience duration equipment and limitations,Program preview contains warm up exercise rest and recovery,Reviewed exercise library
+VD-021,Move,A,Must,Demonstrate gym and home exercise alternatives,Every supported exercise has technique notes and a swap path,Licensed media and exercise review
+VD-022,Move,A,Must,Run workouts with sets reps load timer and exertion,Process interruption preserves completed sets and paused duration,Core API
+VD-023,Move,A,Must,Allow stop skip swap or partial completion,Early finish remains distinct from complete workout,Core API
+VD-024,Move,A,Must,Provide visible stop instructions for symptoms,Concerning symptom path prevents automatic progression,Clinical review
+VD-025,Sleep,A,Must,Manual sleep diary and rested check in,Cross midnight sessions use time instants and show the selected day,Core API
+VD-026,Sleep,B,Must,Import sleep and label source sync time and uncertainty,No stage data creates no invented sleep stage,Health Connect
+VD-027,Recovery,B,Must,Suggest lighter movement or rest without automatic rescheduling,The user reviews and accepts changes; stale data blocks reasoning,Reviewed rules and AI
+VD-028,Relax,A,Must,Offer breathing relaxation speech and accessible transcripts,Audio can be stopped and speech is optional,Licensed or owned content
+VD-029,Relax,B,Must,Open Spotify and YouTube Music links externally,Missing app or broken link offers a browser or alternative,Music provider link policies
+VD-030,Medication,A,Must,Enter prescribed medication instructions and reminders,Taken skipped and snoozed actions do not change prescribed dose,Core API
+VD-031,Medication,A,Must,Support refill requests without automatic dosing advice,Missed dose screen refers to existing guidance or pharmacist,Clinical content review
+VD-032,Plan,A,Must,Task title notes priority duration project and due date,Task can be quickly completed deferred or rescheduled,Core API
+VD-033,Plan,A,Must,Recurring tasks day timeline and week view,Recurrence respects timezone and does not duplicate completed instances,Core API
+VD-034,Plan,A,Must,Focus timer actual time tracking and quick follow ups,Pausing and process restart preserve elapsed time,Core API
+VD-035,Plan,B,Must,AI proposes balanced day respecting fixed appointments,Preview lists every change and rejects overlaps,AI gateway
+VD-036,Plan,D,Later,Optional external calendar synchronization,OAuth revocation stops sync and conflicts are visible,Google Calendar authorization
+VD-037,Reports,B,Must,Upload PDF or image into quarantine,Invalid oversized active or corrupt documents are rejected,Private object storage and scanner
+VD-038,Reports,B,Must,Extract patient date analyte result unit and lab range,Uncertain fields require correction against original,OCR worker
+VD-039,Reports,B,Must,Confirm extracted fields before explanation,No automated explanation is returned for unconfirmed fields,Clinical validation
+VD-040,Reports,B,Must,Explain tests and compatible trends from reviewed content,No diagnosis prescription invented interval or treatment claim,Clinical reviewer and AI gateway
+VD-041,Reports,C,Must,Share selected reports with provider for an expiry period,Revoked or expired grants fail the next access check,Provider identity and consent
+VD-042,Alerts,A,Must,Provide separate reminder channels quiet hours and privacy choices,Notification denial shows in app reminders and settings path,Android notifications
+VD-043,Alerts,B,Must,Explain freshness and uncertainty in health trend suggestions,Stale duplicate data cannot trigger repeated guidance,Reviewed rules
+VD-044,Alerts,C,Must,Implement clinician approved follow up and urgent symptom protocol,Urgent symptoms never wait for payment or AI,Clinical lead and local urgent routes
+VD-045,Devices,B,Must,Request granular Health Connect read permission,Partial denial preserves permitted metrics and manual tracking,Health Connect
+VD-046,Devices,B,Must,Import changes deletions source IDs units and versions,Resync does not double count or reimport own records,Health Connect change handling
+VD-047,Devices,B,Must,Handle overlapping steps sleep and energy sources,Agreed aggregation policy avoids duplicate activity energy,Source lineage and aggregates
+VD-048,Devices,D,Later,Wear OS companion and approved additional vendor adapters,Supported capability and firmware matrix passes device testing,Health Services or vendor contracts
+VD-049,AI,B,Must,Purpose specific coach with reviewed sources and visible limits,Answer contains input freshness and sources when factual,Approved model service
+VD-050,AI,B,Must,User approval for every consequential proposed action,AI cannot charge book share or edit a calendar unconfirmed,Proposal authorization service
+VD-051,AI,B,Must,Voice input text to speech and delete chat history,Voice permission denial leaves complete text flow,Voice services and consent
+VD-052,AI,B,Must,Evaluate clinical safety hallucination and prompt injection,All release blocking safety and isolation scenarios pass,Clinical and security review
+VD-053,Care,C,Must,Search suitable verified doctors by specialty language fee and time,Only active verified providers can accept bookings,Provider registry and onboarding
+VD-054,Care,C,Must,Display provider credentials verification date and terms,Sponsored placements remain labelled,SLMC verification workflow
+VD-055,Care,C,Must,Hold slot and confirm one paid booking,Two concurrent checkouts cannot confirm the same slot,Transactional booking service
+VD-056,Care,C,Must,Reconcile payments cancellation refunds and provider absence,Repeated webhook never duplicates capture or refund,Approved payment processor
+VD-057,Care,C,Must,Secure audio video waiting room and reconnect,Only booked participants obtain short lived session tokens,Secure call service
+VD-058,Care,C,Must,Verified optional WhatsApp contact handoff,External URL contains no report symptom or personal identifier,Provider contact verification
+VD-059,Care,C,Must,Store consultation summary and authorized prescriptions,Final notes are attributable and amendments audited,Clinician portal
+VD-060,Pharmacy,C,Must,Find verified pharmacy by location or manual area,Location denial preserves manual search,Partner directory
+VD-061,Pharmacy,C,Must,Request medicine stock and prescription review,No live stock or dispensing decision is invented,Pharmacist portal
+VD-062,Pharmacy,C,Must,Confirm pharmacist quote before payment,Substitution needs explicit pharmacist and user agreement,Order and payment service
+VD-063,Pharmacy,C,Must,Track pickup delivery cancellation and refund,Every fulfilled order has a receipt and traceable state,Partner fulfillment operations
+VD-064,Community,D,Later,Optional community recipes and habit encouragement,Health records remain private unless separately selected,Moderation and social permissions
+VD-065,Community,D,Later,Report block and review user generated health claims,Unsafe content can be removed with an audit trail,Moderation staffing
+VD-066,Staff portals,C,Must,Separate clinician pharmacist support admin and content roles,Each role passes explicit permitted and forbidden access tests,Role based authorization
+VD-067,Security,A,Must,Encrypt data and protect secrets uploads and audit trails,No sensitive reports appear in logs URLs analytics or push previews,Security and infrastructure
+VD-068,Operations,A,Must,Monitor reliability jobs costs and vendor errors,Alerts identify failed jobs without exposing health content,Observability platform
+VD-069,Operations,C,Must,Support complaints billing reconciliation and care escalation,Every case has an owner status and response procedure,Staffing and partner contracts
+VD-070,Release,A,Must,Staged rollout feature flags backup restore and rollback,Release targets and restore drill pass for enabled features,QA and release operations
+VD-071,Motion,A,Must,Apply subtle press release and one bounded ripple to actionable icons,48 dp hit targets remain stable and one activation produces one action,Compose or web interaction layer
+VD-072,Motion,A,Must,Animate confirmed metric changes with tabular digits,Final target and units match stored data; unknown values never appear as zero,Data repository
+VD-073,Motion,A,Must,Respect system and app reduced motion preferences,Scale count shimmer and spin are disabled; final values appear immediately,Accessibility settings
+VD-074,Motion,A,Must,Announce final counts once to screen readers,Animation frames do not create repeated live announcements,Accessible semantics
+VD-075,Devices,B,Must,Show Connect your fitness device prominently on Today,Disconnected users can start setup or continue manually,Device UI state
+VD-076,Devices,B,Must,Offer Sync here with source and last successful sync,One active sync and meaningful per type completion state,Device repository
+VD-077,Devices,B,Must,Explain setup denied permissions and partial synchronization,Sleep only permission cannot update steps and failed types remain visible,Health Connect permission controller
+VD-078,Assets,A,Must,Deliver reusable SVG Android vectors and PNG density variants,36 assets have matching filenames semantics and transparent exports,Asset manifest
+VD-079,Assets,A,Must,Use illustrations or photos with stable aspect ratios and fallbacks,Missing media leaves a readable labelled control and no layout jump,Content system
+VD-080,Preview,A,Must,Provide an interactive motion and sync review file,Demo is clearly labelled simulated and makes no remote health requests,HTML CSS and JavaScript

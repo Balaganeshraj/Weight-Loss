@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Wellbeing</string>
+    <string name="app_name">VitalDay</string>
     <string name="home">මුල් පිටුව</string>
     <string name="food">ආහාර</string>
     <string name="move">චලනය</string>
@@ -187,7 +187,7 @@
     <string name="notifications_blocked">දැනුම්දීම් අවහිර කර ඇත. Android සැකසුම්වලින් අවසර දෙන්න, නැතහොත් මතක් කිරීම් අක්‍රියව තබන්න.</string>
     <string name="open_settings">දැනුම්දීම් සැකසුම් විවෘත කරන්න</string>
     <string name="sync_status">ක්ලවුඩ් සමමුහුර්තකරණය අක්‍රියයි. ඔබේ සටහන් මෙම උපාංගයේ පමණක් පවතී; ගිණුම් හෝ උඩුගත කිරීම් නැත.</string>
-    <string name="version_label">Wellbeing · 1.0.0 නිකුතු අපේක්ෂකය</string>
+    <string name="version_label">VitalDay · 1.1.0 release candidate</string>
     <string name="load_error">ඔබේ සටහන් විවෘත කළ නොහැකි විය. යෙදුම නැවත අරඹන්න. දත්ත යළි සකසා නැත.</string>
     <string name="save_error">මෙම වෙනස සුරැකිය නොහැකි විය. නැවත උත්සාහ කරන්න.</string>
     <string name="timer_error">තත්පර 1 හා පැය 24 අතර කාලයක් සටහන් කරන්න, නැතහොත් සැසිය ඉවත දමන්න.</string>
@@ -206,4 +206,7 @@
     <string name="user_entered">පරිශීලකයා ඇතුළත් කළ</string>
     <string name="package_label">පරිශීලකයා ඇතුළත් කළ ඇසුරුම් ලේබලය</string>
     <string name="delete_all_confirm">ස්ථිරවම මකන්න</string>
+    <string name="v_medication">ඖෂධ</string>
+    <string name="v_task">කාර්යය</string>
+    <string name="v_reminder_private">නියමිත පරීක්ෂාව සූදානම්. බැලීමට VitalDay විවෘත කරන්න.</string>
 </resources>

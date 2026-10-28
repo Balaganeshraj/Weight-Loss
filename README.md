@@ -1,30 +1,25 @@
-# Wellbeing — Android release candidate
+# VitalDay Android
 
-Native Kotlin / Jetpack Compose wellness journal for adults, based on the supplied v1.1 handoff. Version **1.0.0-rc1**, minSdk 26, compile/targetSdk 36. The default package `com.example.wellbeing.offline` is a placeholder requested by the owner.
+A native Compose wellness and daily-planning app based on the supplied VitalDay handoff. Version **1.1.0-vitalday-rc1**, application ID `com.example.wellbeing.offline` (preserved for updates), minimum API 26, target API 36.
 
-## Implemented
+## Download
 
-- Adult onboarding; Home, Food, Move, Insights and Profile; phone bottom navigation and wide-screen rail; light/dark appearance.
-- Complete English, Sinhala and Tamil app string resources and in-app language switching. All languages are included together in the App Bundle for offline switching. Native-speaker review is not claimed.
-- Confirmed manual food, water, activity, mood and weight records; editing, deletion, historical dates, neutral summaries and an optional limited BMI number. No calorie prescriptions.
-- Eight source-checked USDA-derived reference foods with kcal, protein, carbohydrate, fat, fibre, exact preparation descriptions, source IDs and versions. Source comparison and provenance are documented in `docs/nutrition/PROVENANCE.md`. This is not a dietitian/clinical approval or a full local-food corpus.
-- Optional daily WorkManager reminders, contextual Android 13+ notification permission, notification settings fallback, quiet hours, snooze, disable controls and timezone/reboot rescheduling. Delivery is inexact.
-- Monotonic movement timer with persisted state and atomic completion. A device reboot retains the previously saved accumulated duration rather than inventing time.
-- Room schema 2 with AES-GCM encrypted record/outbox payloads and migration from schema 1; DataStore settings; disabled backup/transfer; JSON export and confirmed local deletion.
-- Clean `JournalRepository`, `SyncQueue` and `CloudJournalGateway` interfaces, stable mutation IDs, local revisions, queue compaction, tombstones and acknowledgement/conflict handling. **No cloud provider or network permission is active.** See `docs/SYNC_READINESS.md`.
-- Three separately labelled recipe ideas with cuisine and declared-allergen filters. No fabricated current prices or recipe nutrition.
+Open the repository **Actions → Android download → latest successful run → Artifacts → VitalDay-Android-download** while signed into GitHub. Extract the ZIP and install `VitalDay-installable-test.apk`. The ZIP also contains the unsigned AAB, source ZIP and submission/status documents. Internal cloud-workspace paths are not public download links.
 
-## Build
+The APK is development-signed. CI signing certificates can change; export your journal before uninstalling an older test build if Android reports a signing mismatch. Use an owner-controlled release signing key for production upgrades.
 
-Open in Android Studio with JDK 17, SDK platform 36 and build tools 35.0.0. Configure your own ignored `local.properties` and accept the SDK licenses.
+## Included
 
-```sh
-./scripts/build-release.sh
-# Stable dedicated device/emulator required; tests create and delete test records:
-./gradlew :app:connectedDebugAndroidTest
-```
+- Today, Food, Move, Plan and Care with responsive native navigation, the supplied visual palette/assets, light/dark/system appearance and reduced motion.
+- Encrypted manual journals, source-checked nutrition, nutrient completeness handling and recipe examples.
+- Planner with recurrence, projects, priority, per-day completion and fixed-plan checks; separate focus/workout timers, workout sets, shopping list, sleep diary, medication check-ins and local reminders.
+- Optional Health Connect steps/sleep reads with granular permission requests, cancellable manual sync, freshness/partial result states and imported-copy deletion. No cloud upload.
+- Clear unavailable states for AI, OCR/file reports, clinical booking/payment/calls and pharmacy partners. Private report notes remain usable.
+- Separately runnable backend foundation with authenticated encrypted record APIs, consent, ownership/version/idempotency checks and automated tests. It is not connected to the Android app.
 
-In the prepared cloud workspace:
+**Read [delivery status](docs/vitalday/DELIVERY_STATUS.md)** for precise coverage and missing Stage A–D items. This is not the complete clinical-commerce product or a production-approved release. New VitalDay screens use English per the new handoff; earlier journal forms retain Sinhala/Tamil translations. No professional content/translation approval is claimed.
+
+## Build and verify
 
 ```sh
 ./scripts/bootstrap-android.sh
@@ -32,18 +27,17 @@ source /workspace/toolchains/android-env.sh
 ./scripts/build-release.sh --no-daemon
 ```
 
-The cloud bootstrap uses verified tool distributions and platform proxy trust without disabling TLS/checksum checks. Existing checkouts are used; do not create worktrees unless explicitly requested.
+Android Studio users can supply JDK 17 and Android SDK 36 instead. Do not commit `local.properties`, caches, credentials or signing keys. The production application ID is configurable via `-Pwellbeing.applicationId=YOUR.OWNED.ID`; signing instructions are in [release/SIGNING.md](release/SIGNING.md).
 
-Outputs: `app/build/outputs/bundle/release/app-release.aab`, `app/build/outputs/apk/release/`, and `app/build/outputs/apk/debug/app-debug.apk`. R8/resource shrinking are enabled for release. Read `release/SIGNING.md`: without owner-supplied signing variables the release artifacts are **unsigned**, never silently debug-signed. A separately labelled development-certificate APK may be included to test the optimized bundle.
+```sh
+# Dedicated test device only: tests create and delete synthetic journal data.
+./gradlew :app:connectedDebugAndroidTest
 
-## Submission and evidence
+# Backend tests, isolated from Android and live services:
+cd backend
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.lock
+.venv/bin/python -m pytest -q
+```
 
-- `PLAY_STORE_SUBMISSION.md`: listing descriptions with verified length limits, proposed Data Safety/Health Apps answers, privacy-policy template and remaining submission actions.
-- `docs/VALIDATION.md`: checks actually executed and their limits.
-- `scripts/check_locales.py`: resource completeness and formatting checks.
-- `scripts/verify_nutrition.py`: 40 source-value checks across eight foods.
-- `docs/ICON_ATTRIBUTION.md`: attribution for the small set of vendored Material vector icons.
-
-This is a release-candidate package, not an approved or published Play release. Replace publisher/support/policy/application-ID placeholders and provide the real upload signing identity before submission. Device testing, native-speaker and content/privacy review remain evidence-based gates. A local privacy template is not a hosted policy.
-
-No accounts, deployed backend, actual cloud synchronization, photo AI, barcode/OCR, Health Connect, clinical report processing or treatment advice are advertised as active. The original handoff/OpenAPI documents remain in `docs/` for future phases.
+See [backend setup](backend/README.md), [OpenAPI](backend/openapi.json), [validation evidence](docs/VALIDATION.md), and [Play submission kit](PLAY_STORE_SUBMISSION.md). The Android app has no Internet permission and requires no backend credentials for its local features.

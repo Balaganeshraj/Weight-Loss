@@ -1,0 +1,35 @@
+{
+  "working_name": "VitalDay",
+  "canvas": {
+    "width_dp": 412,
+    "height_dp": 880
+  },
+  "colors": {
+    "background": "#101510",
+    "surface": "#20271F",
+    "text": "#F6F8F1",
+    "secondary": "#B4BEAE",
+    "primary": "#D4F568",
+    "nutrition": "#BCE9DE",
+    "recovery": "#D9D0F2",
+    "attention": "#FFDBA4"
+  },
+  "spacing_dp": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32
+  ],
+  "radius_dp": {
+    "small": 12,
+    "card": 20,
+    "hero": 28
+  },
+  "minimum_touch_target_dp": 48,
+  "body_sp": 16,
+  "caption_sp": 12,
+  "screen_title_sp": 28,
+  "demo_only": true
+}

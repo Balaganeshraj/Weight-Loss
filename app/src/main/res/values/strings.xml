@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Wellbeing</string>
+    <string name="app_name">VitalDay</string>
     <string name="home">Home</string>
     <string name="food">Food</string>
     <string name="move">Move</string>
@@ -187,7 +187,7 @@
     <string name="notifications_blocked">Notifications are blocked. You can allow them in Android settings, or keep reminders off.</string>
     <string name="open_settings">Open notification settings</string>
     <string name="sync_status">Cloud sync is off. Your journal stays on this device; no account or uploads.</string>
-    <string name="version_label">Wellbeing · 1.0.0 release candidate</string>
+    <string name="version_label">VitalDay · 1.1.0 release candidate</string>
     <string name="load_error">Your records could not be opened. Restart the app. Data has not been reset.</string>
     <string name="save_error">Could not save this change. Please try again.</string>
     <string name="timer_error">Record between 1 second and 24 hours, or discard the session.</string>
@@ -206,4 +206,7 @@
     <string name="user_entered">User entered</string>
     <string name="package_label">User-entered package label</string>
     <string name="delete_all_confirm">Delete permanently</string>
+    <string name="v_medication">Medication</string>
+    <string name="v_task">Task</string>
+    <string name="v_reminder_private">A scheduled check-in is ready. Open VitalDay to review it.</string>
 </resources>

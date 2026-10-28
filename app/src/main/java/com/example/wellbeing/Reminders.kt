@@ -111,7 +111,7 @@ class ReminderActionReceiver : BroadcastReceiver() {
             when (intent.action) {
                 "disable" -> controller.disable()
                 "snooze" -> controller.snooze()
-                Intent.ACTION_TIME_CHANGED, Intent.ACTION_TIMEZONE_CHANGED, Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> controller.reschedule()
+                Intent.ACTION_TIME_CHANGED, Intent.ACTION_TIMEZONE_CHANGED, Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> { controller.reschedule(); EntryReminders.reschedule(context.applicationContext) }
             }
         } finally { pending.finish() } }
     }

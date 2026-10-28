@@ -6,3 +6,10 @@ local.properties
 *.keystore
 .idea/
 *.iml
+__pycache__/
+.pytest_cache/
+.venv/
+.env
+.env.*
+*.db
+backend/.local/

@@ -6,7 +6,7 @@ import java.time.ZoneId
 import java.util.UUID
 import kotlin.math.pow
 
-enum class Kind { FOOD, WATER, ACTIVITY, WEIGHT, MOOD, PROFILE, TIMER }
+enum class Kind { FOOD, WATER, ACTIVITY, WEIGHT, MOOD, PROFILE, TIMER, TASK, SLEEP, MEDICATION, MEDICATION_EVENT, FOCUS_SESSION, MEAL_PLAN, SHOPPING, REPORT, DEVICE_SNAPSHOT }
 data class Entry(
     val id: String = UUID.randomUUID().toString(),
     val kind: Kind,
@@ -39,6 +39,10 @@ object WellnessMath {
         Kind.ACTIVITY -> entry.amount in 0.016..1440.0
         Kind.WEIGHT -> entry.amount in 20.0..500.0
         Kind.MOOD -> entry.amount in 1.0..5.0
+        Kind.TASK, Kind.MEAL_PLAN -> entry.title.isNotBlank() && entry.title.length <= 120 && entry.amount in 1.0..1440.0
+        Kind.SLEEP -> entry.amount in 1.0..1440.0
+        Kind.MEDICATION, Kind.SHOPPING, Kind.REPORT -> entry.title.isNotBlank() && entry.title.length <= 120
+        Kind.FOCUS_SESSION -> entry.amount in 0.016..1440.0
         else -> true
     }
 }

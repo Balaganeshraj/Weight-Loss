@@ -49,10 +49,10 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 private val Forest = Color(0xFF164F40)
-private val Lime = Color(0xFFD9E9A4)
+private val Lime = Color(0xFFD4F568)
 private val Cream = Color(0xFFF7F8F2)
 private val lightColors = lightColorScheme(primary = Forest, onPrimary = Color.White, primaryContainer = Color(0xFFE3EDDE), onPrimaryContainer = Forest, secondary = Color(0xFF596543), secondaryContainer = Lime, surface = Cream, background = Cream, surfaceContainer = Color.White, surfaceContainerHigh = Color(0xFFEEF1E9), outlineVariant = Color(0xFFDCE3D8))
-private val darkColors = darkColorScheme(primary = Lime, onPrimary = Forest, primaryContainer = Forest, onPrimaryContainer = Lime, surface = Color(0xFF121C17), background = Color(0xFF121C17), surfaceContainer = Color(0xFF1C2921), surfaceContainerHigh = Color(0xFF28372D))
+private val darkColors = darkColorScheme(primary = Lime, onPrimary = Color(0xFF17210D), primaryContainer = Color(0xFF354026), onPrimaryContainer = Lime, secondary = Color(0xFFBCE9DE), secondaryContainer = Color(0xFF294B43), surface = Color(0xFF101510), background = Color(0xFF101510), surfaceContainer = Color(0xFF20271F), surfaceContainerHigh = Color(0xFF2A3428), onSurface = Color(0xFFF6F8F1), onSurfaceVariant = Color(0xFFB4BEAE), outlineVariant = Color(0xFF3B4738))
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Language.apply(this)
@@ -61,14 +61,16 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val vm: WellbeingViewModel = viewModel()
             val dark by vm.dark.collectAsStateWithLifecycle()
-            MaterialTheme(colorScheme = if (dark) darkColors else lightColors, shapes = Shapes(small = RoundedCornerShape(12.dp), medium = RoundedCornerShape(20.dp), large = RoundedCornerShape(28.dp))) {
-                Surface(Modifier.fillMaxSize()) { WellbeingApp(vm) }
+            val systemTheme by vm.systemTheme.collectAsStateWithLifecycle()
+            val actualDark = if (systemTheme) androidx.compose.foundation.isSystemInDarkTheme() else dark
+            MaterialTheme(colorScheme = if (actualDark) darkColors else lightColors, shapes = Shapes(small = RoundedCornerShape(12.dp), medium = RoundedCornerShape(20.dp), large = RoundedCornerShape(28.dp))) {
+                Surface(Modifier.fillMaxSize()) { VitalDayApp(vm) }
             }
         }
     }
 }
-private fun number(value: Double) = String.format(Locale.getDefault(), if (value % 1.0 == 0.0) "%.0f" else "%.1f", value)
-private fun decimal(text: String) = text.trim().replace(',', '.').toDoubleOrNull()?.takeIf { it.isFinite() }
+internal fun number(value: Double) = String.format(Locale.getDefault(), if (value % 1.0 == 0.0) "%.0f" else "%.1f", value)
+internal fun decimal(text: String) = text.trim().replace(',', '.').toDoubleOrNull()?.takeIf { it.isFinite() }
 private data class Destination(val title: Int, val icon: ImageVector)
 private val destinations = listOf(Destination(R.string.home, Icons.Outlined.Home), Destination(R.string.food, Icons.Outlined.Restaurant), Destination(R.string.move, Icons.AutoMirrored.Outlined.DirectionsWalk), Destination(R.string.insights, Icons.Outlined.BarChart), Destination(R.string.profile, Icons.Outlined.PersonOutline))
 
@@ -134,12 +136,12 @@ private val destinations = listOf(Destination(R.string.home, Icons.Outlined.Home
         DatePickerDialog(onDismissRequest = { datePicker = false }, confirmButton = { TextButton(onClick = { state.selectedDateMillis?.let { dayString = Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate().toString() }; datePicker = false }) { Text(ctx.getString(R.string.choose_date)) } }, dismissButton = { TextButton(onClick = { datePicker = false }) { Text(ctx.getString(R.string.cancel)) } }) { DatePicker(state) }
     }
 }
-private fun timestamp(day: LocalDate): Long = if (day == LocalDate.now()) System.currentTimeMillis() else day.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+internal fun timestamp(day: LocalDate): Long = if (day == LocalDate.now()) System.currentTimeMillis() else day.atTime(12, 0).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
-@Composable private fun Heading(title: String, subtitle: String) {
+@Composable internal fun Heading(title: String, subtitle: String) {
     val ctx = LocalContext.current
  Column(verticalArrangement = Arrangement.spacedBy(6.dp)) { Text(title, style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold, letterSpacing = (-1).sp); Text(subtitle, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant) } }
-@Composable private fun Panel(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+@Composable internal fun Panel(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     val ctx = LocalContext.current
  Surface(modifier.fillMaxWidth(), shape = RoundedCornerShape(24.dp), color = MaterialTheme.colorScheme.surfaceContainer) { Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp), content = content) } }
 @Composable private fun SectionTitle(title: String, action: String? = null, onAction: () -> Unit = {}) {
@@ -215,7 +217,7 @@ private fun timestamp(day: LocalDate): Long = if (day == LocalDate.now()) System
     }
 }
 
-@Composable private fun FoodScreen(entries: List<Entry>, profile: Profile, onAdd: () -> Unit, onEdit: (Entry) -> Unit) {
+@Composable internal fun FoodScreen(entries: List<Entry>, profile: Profile, onAdd: () -> Unit, onEdit: (Entry) -> Unit) {
     val ctx = LocalContext.current
     var recipesMode by rememberSaveable { mutableStateOf(false) }
     var cuisine by rememberSaveable { mutableStateOf("All") }
@@ -259,7 +261,7 @@ private fun timestamp(day: LocalDate): Long = if (day == LocalDate.now()) System
 }
 private fun recipeTitle(item: Recipe) = when(recipes.indexOf(item)) { 0 -> R.string.recipe_dhal; 1 -> R.string.recipe_salad; else -> R.string.recipe_oats }
 
-@Composable private fun MoveScreen(vm: WellbeingViewModel, entries: List<Entry>, busy: Boolean, onAdd: () -> Unit, onEdit: (Entry) -> Unit) {
+@Composable internal fun MoveScreen(vm: WellbeingViewModel, entries: List<Entry>, busy: Boolean, onAdd: () -> Unit, onEdit: (Entry) -> Unit) {
     val ctx = LocalContext.current
 
     var now by remember { mutableLongStateOf(SystemClock.elapsedRealtime()) }
@@ -292,7 +294,7 @@ private fun recipeTitle(item: Recipe) = when(recipes.indexOf(item)) { 0 -> R.str
     if (discard) AlertDialog(onDismissRequest = { discard = false }, title = { Text(ctx.getString(R.string.discard_question)) }, text = { Text(ctx.getString(R.string.discard_hint)) }, confirmButton = { TextButton(onClick = { vm.delete("timer"); discard = false }) { Text(ctx.getString(R.string.discard)) } }, dismissButton = { TextButton(onClick = { discard = false }) { Text(ctx.getString(R.string.keep_session)) } })
 }
 
-@Composable private fun InsightsScreen(entries: List<Entry>, profile: Profile, onAdd: () -> Unit, onEdit: (Entry) -> Unit) {
+@Composable internal fun InsightsScreen(entries: List<Entry>, profile: Profile, onAdd: () -> Unit, onEdit: (Entry) -> Unit) {
     val ctx = LocalContext.current
 
     Heading(ctx.getString(R.string.insights_title), ctx.getString(R.string.insights_subtitle))
@@ -331,7 +333,7 @@ private fun recipeTitle(item: Recipe) = when(recipes.indexOf(item)) { 0 -> R.str
     if (weights.isNotEmpty()) { SectionTitle(ctx.getString(R.string.measurement_history)); Panel { weights.reversed().forEach { Text(Instant.ofEpochMilli(it.at).atZone(ZoneId.systemDefault()).toLocalDate().toString(), style = MaterialTheme.typography.labelSmall); LogRow(it) { onEdit(it) } } } }
 }
 
-@Composable private fun Onboarding(busy: Boolean, onSave: (Profile) -> Unit) {
+@Composable internal fun Onboarding(busy: Boolean, onSave: (Profile) -> Unit) {
     val ctx = LocalContext.current
 
     var age by rememberSaveable { mutableStateOf("") }
@@ -360,19 +362,20 @@ private fun recipeTitle(item: Recipe) = when(recipes.indexOf(item)) { 0 -> R.str
     }
 }
 
-@Composable private fun EntryDialog(kind: Kind, existing: Entry?, date: LocalDate, busy: Boolean, onDismiss: () -> Unit, onSave: (Entry) -> Unit, onDelete: (String) -> Unit) {
+@Composable internal fun EntryDialog(kind: Kind, existing: Entry?, date: LocalDate, busy: Boolean, onDismiss: () -> Unit, onSave: (Entry) -> Unit, onDelete: (String) -> Unit) {
     val ctx = LocalContext.current
     val catalog = remember { NutritionCatalog.load(ctx) }
-    var title by remember { mutableStateOf(existing?.let { entryTitle(ctx, it) } ?: when(kind) { Kind.WATER -> ctx.getString(R.string.water); Kind.WEIGHT -> ctx.getString(R.string.weight); Kind.ACTIVITY -> ctx.getString(R.string.walk); else -> "" }) }
-    var amount by remember { mutableStateOf(existing?.amount?.let(::number) ?: when(kind) { Kind.FOOD -> "100"; Kind.WATER -> "250"; Kind.ACTIVITY -> "20"; else -> "" }) }
-    var energyPer100 by remember { mutableStateOf(existing?.let { (it.energy * 100 / it.amount).toString() } ?: "") }
-    var unit by remember { mutableStateOf("kcal") }
-    var source by remember { mutableStateOf(existing?.source ?: ctx.getString(R.string.package_label)) }
-    var selected by remember { mutableStateOf(catalog.find { it.id == existing?.source && it.version == existing.sourceVersion }) }
-    var note by remember { mutableStateOf(existing?.note ?: "Comfortable") }
-    var query by remember { mutableStateOf("") }
-    var tried by remember { mutableStateOf(false) }
-    var deleting by remember { mutableStateOf(false) }
+    var title by rememberSaveable { mutableStateOf(existing?.let { entryTitle(ctx, it) } ?: when(kind) { Kind.WATER -> ctx.getString(R.string.water); Kind.WEIGHT -> ctx.getString(R.string.weight); Kind.ACTIVITY -> ctx.getString(R.string.walk); else -> "" }) }
+    var amount by rememberSaveable { mutableStateOf(existing?.amount?.let(::number) ?: when(kind) { Kind.FOOD -> "100"; Kind.WATER -> "250"; Kind.ACTIVITY -> "20"; else -> "" }) }
+    var energyPer100 by rememberSaveable { mutableStateOf(existing?.let { (it.energy * 100 / it.amount).toString() } ?: "") }
+    var unit by rememberSaveable { mutableStateOf("kcal") }
+    var source by rememberSaveable { mutableStateOf(existing?.source ?: ctx.getString(R.string.package_label)) }
+    var selectedId by rememberSaveable { mutableStateOf(existing?.source ?: "") }
+    val selected = catalog.find { it.id == selectedId && (existing == null || it.version == existing.sourceVersion || selectedId != existing.source) }
+    var note by rememberSaveable { mutableStateOf(existing?.note ?: "Comfortable") }
+    var query by rememberSaveable { mutableStateOf("") }
+    var tried by rememberSaveable { mutableStateOf(false) }
+    var deleting by rememberSaveable { mutableStateOf(false) }
     val grams = decimal(amount)
     val kcal100 = decimal(energyPer100)?.let { if(unit == "kJ") it / 4.184 else it }
     val valid = when(kind) {
@@ -382,14 +385,14 @@ private fun recipeTitle(item: Recipe) = when(recipes.indexOf(item)) { 0 -> R.str
         Kind.WEIGHT -> grams != null && grams in 20.0..500.0
         else -> false
     }
-    fun manual() { selected = null; source = ctx.getString(R.string.package_label) }
+    fun manual() { selectedId = ""; source = ctx.getString(R.string.package_label) }
     AlertDialog(onDismissRequest = onDismiss, title = { Text(ctx.getString(if(existing == null) R.string.add_entry else R.string.edit_entry)) }, text = {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(ctx.getString(R.string.for_date, existing?.let { Instant.ofEpochMilli(it.at).atZone(ZoneId.systemDefault()).toLocalDate() } ?: date))
             if(kind == Kind.FOOD) {
                 OutlinedTextField(query, { query=it }, label={ Text(ctx.getString(R.string.search_foods)) }, leadingIcon={ Icon(Icons.Outlined.Search,null) }, modifier=Modifier.fillMaxWidth(), singleLine=true)
                 catalog.filter { food -> foodSearch(ctx, food, query) }.forEach { food ->
-                    TextButton(onClick={ selected=food; title=ctx.getString(food.nameResource); energyPer100=food.kcal.toString(); unit="kcal"; source=food.id }, modifier=Modifier.fillMaxWidth()) {
+                    TextButton(onClick={ selectedId=food.id; title=ctx.getString(food.nameResource); energyPer100=food.kcal.toString(); unit="kcal"; source=food.id }, modifier=Modifier.fillMaxWidth()) {
                         Text(ctx.getString(food.nameResource),Modifier.weight(1f)); if(selected==food) Icon(Icons.Outlined.Check,null)
                     }
                 }
@@ -401,7 +404,7 @@ private fun recipeTitle(item: Recipe) = when(recipes.indexOf(item)) { 0 -> R.str
             if(kind==Kind.FOOD) {
                 Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) { listOf("kcal","kJ").forEach { candidate -> FilterChip(unit==candidate,{ if(unit!=candidate) { energyPer100=decimal(energyPer100)?.let { if(candidate=="kJ") (it*4.184).toString() else (it/4.184).toString() } ?: ""; unit=candidate } },{ Text(candidate) },modifier=Modifier.heightIn(min=48.dp)) } }
                 OutlinedTextField(energyPer100,{ energyPer100=it.take(12);manual() },label={ Text(ctx.getString(R.string.energy_per100)) },keyboardOptions=KeyboardOptions(keyboardType=KeyboardType.Decimal),modifier=Modifier.fillMaxWidth(),singleLine=true)
-                OutlinedTextField(source,{ source=it.take(200);selected=null },label={ Text(ctx.getString(R.string.source_label)) },modifier=Modifier.fillMaxWidth())
+                OutlinedTextField(source,{ source=it.take(200);selectedId="" },label={ Text(ctx.getString(R.string.source_label)) },modifier=Modifier.fillMaxWidth())
                 if(valid) {
                     Text(ctx.getString(R.string.portion_estimate,number(WellnessMath.portion(kcal100!!,grams!!))),fontWeight=FontWeight.Bold)
                     selected?.let { food -> MacroText(food.macros(grams)); Text(ctx.getString(R.string.source_reference,food.id,food.version),style=MaterialTheme.typography.bodySmall) } ?: Text(ctx.getString(R.string.macros_unknown),style=MaterialTheme.typography.bodySmall)
@@ -423,7 +426,7 @@ private fun recipeTitle(item: Recipe) = when(recipes.indexOf(item)) { 0 -> R.str
     if(deleting) AlertDialog(onDismissRequest={deleting=false},title={Text(ctx.getString(R.string.delete_entry_question))},text={Text(ctx.getString(R.string.delete_entry_hint))},confirmButton={TextButton(onClick={existing?.let{onDelete(it.id)}}){Text(ctx.getString(R.string.delete))}},dismissButton={TextButton(onClick={deleting=false}){Text(ctx.getString(R.string.keep_entry))}})
 }
 
-@Composable private fun ProfileScreen(vm: WellbeingViewModel, profile: Profile, busy: Boolean, snack: SnackbarHostState) {
+@Composable internal fun ProfileScreen(vm: WellbeingViewModel, profile: Profile, busy: Boolean, snack: SnackbarHostState) {
     val ctx=LocalContext.current
     val dark by vm.dark.collectAsStateWithLifecycle()
     var edit by remember { mutableStateOf(false) }
@@ -477,7 +480,7 @@ private fun recipeTitle(item: Recipe) = when(recipes.indexOf(item)) { 0 -> R.str
     }
 }
 
-@Composable private fun ReminderSettings(vm: WellbeingViewModel) {
+@Composable internal fun ReminderSettings(vm: WellbeingViewModel) {
     val ctx=LocalContext.current
     val settings by vm.reminderPreferences.collectAsStateWithLifecycle()
     var hour by rememberSaveable(settings.hour) { mutableStateOf(settings.hour.toString()) }
@@ -533,7 +536,7 @@ private fun foodSearch(context: android.content.Context,food:ReferenceFood,query
     val ctx=LocalContext.current
     Text(ctx.getString(R.string.macros,number(m.protein),number(m.carbohydrate),number(m.fat),number(m.fiber)),style=MaterialTheme.typography.bodySmall)
 }
-@Composable private fun EntryMacros(entry:Entry) {
+@Composable internal fun EntryMacros(entry:Entry) {
     val ctx=LocalContext.current
     val macros=remember(entry.extra){runCatching{org.json.JSONObject(entry.extra).let{Macros(it.getDouble("proteinG"),it.getDouble("carbohydrateG"),it.getDouble("fatG"),it.getDouble("fiberG"))}}.getOrNull()}
     if(macros!=null) MacroText(macros) else Text(ctx.getString(R.string.macros_unknown),style=MaterialTheme.typography.bodySmall)
