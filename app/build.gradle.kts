@@ -39,7 +39,15 @@ android {
         }
     }
     androidResources { localeFilters += listOf("en", "si", "ta") }
-    lint { abortOnError = true; warningsAsErrors = true; enable += setOf("MissingTranslation", "ExtraTranslation") }
+    lint {
+        abortOnError = true
+        warningsAsErrors = true
+        enable += setOf("MissingTranslation", "ExtraTranslation")
+        // Remote version discovery must not make a pinned release build fail
+        // merely because a newer tool or library was published. Keep these
+        // upgrade notices visible; correctness and translation checks still fail.
+        informational += setOf("AndroidGradlePluginVersion", "GradleDependency", "NewerVersionAvailable")
+    }
     testOptions { animationsDisabled = true }
     sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
 }

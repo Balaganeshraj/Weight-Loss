@@ -32,3 +32,7 @@ For local Android Studio use a hardware-accelerated emulator or physical phone. 
 The API 30 x86_64 software image failed during Android system startup in this cloud instance, before any app tests ran. The lighter API 28 x86 image with Vulkan disabled reached boot completion but also failed to maintain stable system services; app device validation remains blocked. Hardware acceleration is preferable.
 
 For complete release checks run `./scripts/build-release.sh --no-daemon`. Final device-test evidence and native 16 KB alignment checks are in VALIDATION.md.
+
+## Reproducible lint policy
+
+Release dependencies and the Gradle wrapper are pinned. Lint online upgrade notices (`AndroidGradlePluginVersion`, `GradleDependency`, `NewerVersionAvailable`) are informational, so availability of a newer version does not change CI success. This does not suppress correctness, security, missing/extra translation or other lint warnings; those remain blocking. Review dependency updates separately before changing the release toolchain.
