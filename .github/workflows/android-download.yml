@@ -31,7 +31,9 @@ jobs:
           "$sdkmanager_bin" 'platforms;android-36' 'build-tools;35.0.0'
       - uses: gradle/actions/setup-gradle@v5
       - name: Build and validate
+        shell: bash
         run: |
+          set -o pipefail
           chmod +x gradlew scripts/build-release.sh
           ./scripts/build-release.sh --no-daemon '-Dorg.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8' --max-workers=2 --console=plain 2>&1 | tee build.log
       - name: Report build failure
