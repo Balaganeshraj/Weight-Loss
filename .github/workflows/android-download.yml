@@ -45,7 +45,7 @@ jobs:
           log = Path('build.log')
           if log.exists():
               text = log.read_text(errors='replace')
-              excerpt = text[-12000:]
+              excerpt = text[-2800:]
               escaped = excerpt.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
               print('::error title=Build failure details::' + escaped)
               with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
