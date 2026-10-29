@@ -34,7 +34,7 @@ import java.util.Locale
             .background(Brush.linearGradient(listOf(tint, tint.copy(alpha = .6f)))), contentAlignment = Alignment.Center) {
             Box(Modifier.align(Alignment.TopEnd).offset(x = 28.dp, y = (-24).dp).size(112.dp).background(Color.White.copy(alpha = .25f), CircleShape))
             Box(Modifier.align(Alignment.BottomStart).offset(x = (-20).dp, y = 35.dp).size(100.dp).background(Color.White.copy(alpha = .25f), CircleShape))
-            if (!largeText) Text(stringResource(R.string.promo_title), Modifier.padding(18.dp), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = VitalInk)
+            if (!largeText) Text(stringResource(R.string.promo_title), Modifier.padding(18.dp), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = VelnumiPlum)
         }
         if (largeText) Text(stringResource(R.string.promo_title), style = MaterialTheme.typography.titleMedium)
         Text(stringResource(R.string.promo_preview), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -46,12 +46,12 @@ import java.util.Locale
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         if (maxWidth >= 440.dp && LocalConfiguration.current.fontScale <= 1.3f) {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                PromotionBanner(2, VitalLilac, Modifier.weight(1f))
-                PromotionBanner(3, VitalAmber, Modifier.weight(1f))
+                PromotionBanner(2, VelnumiSoftCoral, Modifier.weight(1f))
+                PromotionBanner(3, VelnumiWarm, Modifier.weight(1f))
             }
         } else Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            PromotionBanner(2, VitalLilac)
-            PromotionBanner(3, VitalAmber)
+            PromotionBanner(2, VelnumiSoftCoral)
+            PromotionBanner(3, VelnumiWarm)
         }
     }
 }
@@ -112,9 +112,9 @@ private data class DemoExchange(val question: String, val reply: String)
     }
     val topics = listOf(AssistantDemo.Topic.PLAN to R.string.assistant_plan_topic, AssistantDemo.Topic.SLEEP to R.string.assistant_sleep_topic, AssistantDemo.Topic.FOOD to R.string.assistant_food_topic, AssistantDemo.Topic.MOVE to R.string.assistant_move_topic)
     if (voiceMode) {
-        VitalCard(VitalLilac) {
+        VitalCard(VelnumiSoftCoral) {
             Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Box(Modifier.size(112.dp).background(Brush.radialGradient(listOf(VitalTeal, VitalLime, VitalLilac)), CircleShape), contentAlignment = Alignment.Center) {
+                Box(Modifier.size(112.dp).background(Brush.radialGradient(listOf(VelnumiCoral, VelnumiRuby, VelnumiBlush)), CircleShape), contentAlignment = Alignment.Center) {
                     VitalIcon(R.drawable.vd_ic_voice, description = null)
                 }
             }
@@ -128,7 +128,7 @@ private data class DemoExchange(val question: String, val reply: String)
         VitalCard { Text(label(selected.replyId())) }
         OfflineDemoSpeech(language, label(selected.replyId()), ::label)
     } else {
-        VitalCard(VitalTeal) { Text(label(R.string.assistant_greeting)) }
+        VitalCard(VelnumiRose) { Text(label(R.string.assistant_greeting)) }
         history.forEach { exchange ->
             VitalCard {
                 Text(label(R.string.assistant_you), style = MaterialTheme.typography.labelSmall)

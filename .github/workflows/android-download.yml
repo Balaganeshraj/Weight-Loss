@@ -62,22 +62,22 @@ jobs:
           keytool -genkeypair -noprompt -keystore "$test_keystore" \
             -storepass android -keypass android -alias androiddebugkey \
             -keyalg RSA -keysize 2048 -validity 3650 \
-            -dname "CN=VitalDay Test, O=Development, C=LK"
+            -dname "CN=VELNUMI Test, O=Development, C=LK"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" sign \
             --ks "$test_keystore" \
             --ks-key-alias androiddebugkey --ks-pass pass:android --key-pass pass:android \
-            --out downloads/VitalDay-installable-test.apk app/build/outputs/apk/release/app-release-unsigned.apk
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify downloads/VitalDay-installable-test.apk
-          "$ANDROID_HOME/build-tools/35.0.0/zipalign" -c -P 16 4 downloads/VitalDay-installable-test.apk
-          cp app/build/outputs/bundle/release/app-release.aab downloads/VitalDay-unsigned.aab
+            --out downloads/VELNUMI-installable-test.apk app/build/outputs/apk/release/app-release-unsigned.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify downloads/VELNUMI-installable-test.apk
+          "$ANDROID_HOME/build-tools/35.0.0/zipalign" -c -P 16 4 downloads/VELNUMI-installable-test.apk
+          cp app/build/outputs/bundle/release/app-release.aab downloads/VELNUMI-unsigned.aab
           cp PLAY_STORE_SUBMISSION.md release/SIGNING.md docs/vitalday/DELIVERY_STATUS.md downloads/
-          git archive --format=zip --output=downloads/VitalDay-source.zip HEAD
+          git archive --format=zip --output=downloads/VELNUMI-source.zip HEAD
           printf '%s\n' 'APK: optimized release build, development-signed for testing only. AAB: unsigned, requires owner signing before Play upload. Device testing remains required. The CI debug certificate may differ from other builds; an update may require uninstalling the older test app, which deletes its local data. Export your journal before uninstalling.' > downloads/READ-ME.txt
           cd downloads
           sha256sum *.apk *.aab *.zip > SHA256SUMS.txt
       - uses: actions/upload-artifact@v6
         with:
-          name: VitalDay-Android-download
+          name: VELNUMI-Android-download
           path: downloads/
           if-no-files-found: error
           retention-days: 30
@@ -85,7 +85,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v6
         with:
-          name: VitalDay-build-diagnostics
+          name: VELNUMI-build-diagnostics
           path: |
             build.log
             app/build/reports/

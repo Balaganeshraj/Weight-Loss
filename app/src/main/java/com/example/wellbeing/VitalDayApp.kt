@@ -29,11 +29,14 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import org.json.JSONObject
 
-val VitalLime = Color(0xFFD4F568)
-val VitalTeal = Color(0xFFBCE9DE)
-val VitalLilac = Color(0xFFD9D0F2)
-val VitalAmber = Color(0xFFFFDBA4)
-val VitalInk = Color(0xFF182116)
+val VelnumiCrimson = Color(0xFFB3122F)
+val VelnumiRuby = Color(0xFFE63946)
+val VelnumiCoral = Color(0xFFFF7A7A)
+val VelnumiBlush = Color(0xFFF9D7D6)
+val VelnumiRose = Color(0xFFFBE6E5)
+val VelnumiSoftCoral = Color(0xFFFFE4E1)
+val VelnumiWarm = Color(0xFFFCF6F4)
+val VelnumiPlum = Color(0xFF3B1F2E)
 val LocalVitalMotion = staticCompositionLocalOf { false }
 
 @Composable fun VitalButton(label: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
@@ -45,7 +48,7 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
 }
 @Composable fun VitalIcon(id: Int, modifier: Modifier = Modifier, description: String? = null) = Icon(painterResource(id), description, modifier.size(24.dp))
 @Composable fun VitalCard(color: Color? = null, content: @Composable ColumnScope.() -> Unit) {
-    Surface(shape = RoundedCornerShape(24.dp), color = color ?: MaterialTheme.colorScheme.surfaceContainer, contentColor = if (color != null) VitalInk else MaterialTheme.colorScheme.onSurface, modifier = Modifier.fillMaxWidth()) {
+    Surface(shape = RoundedCornerShape(24.dp), color = color ?: MaterialTheme.colorScheme.surfaceContainer, contentColor = if (color != null) VelnumiPlum else MaterialTheme.colorScheme.onSurface, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
     }
 }
@@ -95,23 +98,27 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
     if (profile == null) { Box(Modifier.fillMaxSize()) { Onboarding(busy, vm::saveProfile); SnackbarHost(snack, Modifier.align(Alignment.BottomCenter)) }; return }
     BackHandler(page.isNotEmpty()) { page = "" }
     val daily = entries.filter { WellnessMath.onDate(it, day, ZoneId.systemDefault()) }
-    val titles = listOf(R.string.nav_today, R.string.food, R.string.move, R.string.nav_plan, R.string.nav_care).map { stringResource(it) }
-    val icons = listOf(R.drawable.vd_ic_home, R.drawable.vd_ic_food, R.drawable.vd_ic_dumbbell, R.drawable.vd_ic_calendar, R.drawable.vd_ic_care)
+    val titles = listOf(R.string.nav_today, R.string.nav_nutrition, R.string.move, R.string.nav_plan, R.string.nav_sleep).map { stringResource(it) }
+    val icons = listOf(R.drawable.vd_ic_home, R.drawable.vd_ic_food, R.drawable.vd_ic_dumbbell, R.drawable.vd_ic_calendar, R.drawable.vd_ic_sleep)
     CompositionLocalProvider(LocalVitalMotion provides (reduced || !ValueAnimator.areAnimatorsEnabled())) {
         BoxWithConstraints {
             val wide = maxWidth >= 700.dp
             Scaffold(snackbarHost = { SnackbarHost(snack) }, bottomBar = {
-                if (!wide) NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    titles.forEachIndexed { i, label -> NavigationBarItem(selected = tab == i && page.isEmpty(), onClick = { tab = i; page = "" }, icon = { VitalIcon(icons[i]) }, label = { Text(label) }, colors = NavigationBarItemDefaults.colors(indicatorColor = VitalLime, selectedIconColor = VitalInk)) }
+                if (!wide) NavigationBar(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp).clip(RoundedCornerShape(32.dp)), containerColor = MaterialTheme.colorScheme.surfaceContainer, tonalElevation = 0.dp) {
+                    titles.forEachIndexed { i, label -> NavigationBarItem(selected = tab == i && page.isEmpty(), onClick = { tab = i; page = "" }, icon = { VitalIcon(if (i == 0 && tab == 0 && page.isEmpty()) R.drawable.velnumi_home_active else icons[i]) }, label = { Text(label, fontSize = 10.sp, letterSpacing = 0.sp, maxLines = 1, softWrap = false, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis) }, colors = NavigationBarItemDefaults.colors(indicatorColor = VelnumiBlush, selectedIconColor = VelnumiCrimson, selectedTextColor = MaterialTheme.colorScheme.primary)) }
                 }
             }) { insets ->
                 Row(Modifier.fillMaxSize().padding(insets)) {
-                    if (wide) NavigationRail(Modifier.fillMaxHeight()) { titles.forEachIndexed { i, label -> NavigationRailItem(selected = tab == i && page.isEmpty(), onClick = { tab = i; page = "" }, icon = { VitalIcon(icons[i]) }, label = { Text(label) }) } }
+                    if (wide) NavigationRail(Modifier.fillMaxHeight()) { titles.forEachIndexed { i, label -> NavigationRailItem(selected = tab == i && page.isEmpty(), onClick = { tab = i; page = "" }, icon = { VitalIcon(if (i == 0 && tab == 0 && page.isEmpty()) R.drawable.velnumi_home_active else icons[i]) }, label = { Text(label) }) } }
                     Box(Modifier.weight(1f), contentAlignment = Alignment.TopCenter) {
                         Column(Modifier.widthIn(max = 840.dp).fillMaxWidth().verticalScroll(remember(page, tab) { ScrollState(0) }).padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
                             Row(Modifier.fillMaxWidth().padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                                 if (page.isNotEmpty()) IconButton({ page = "" }) { VitalIcon(R.drawable.vd_ic_chevron_left, description = "Back") }
-                                Text("VitalDay", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                                Image(painterResource(R.drawable.velnumi_mark), null, Modifier.size(40.dp))
+                                Column(Modifier.weight(1f).padding(start = 6.dp)) {
+                                    Text("VELNUMI", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, letterSpacing = 1.5.sp, color = MaterialTheme.colorScheme.primary)
+                                    Text(stringResource(R.string.brand_tagline), style = MaterialTheme.typography.labelSmall)
+                                }
                                 IconButton({ page = "profile" }) { VitalIcon(R.drawable.vd_ic_settings, description = "Profile and privacy") }
                                 IconButton({ quick = true }) { VitalIcon(R.drawable.vd_ic_plus, description = "Quick add") }
                             }
@@ -130,6 +137,7 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
                                 "reports" -> VitalReports(entries, { edit(Kind.REPORT) }, { edit(Kind.REPORT, it) })
                                 "coach", "coach_voice" -> VitalAssistant(startWithVoice = page == "coach_voice", onPlan = { page = ""; tab = 3 })
                                 "medication" -> VitalMedication(vm, entries, busy, { edit(Kind.MEDICATION) }, { edit(Kind.MEDICATION, it) })
+                                "care" -> VitalCare { page = it }
                                 "sleep" -> VitalSleep(entries, { edit(Kind.SLEEP) }, { edit(Kind.SLEEP, it) })
                                 "relax" -> VitalBreathing()
                                 "plan" -> VitalPlanner(vm, entries, day, busy, { date = it.toString() }, { edit(Kind.TASK) }, { edit(it.kind, it) }, { page = "focus" })
@@ -138,7 +146,7 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
                                 "shopping" -> VitalShopping(vm, entries, busy, { edit(Kind.SHOPPING) })
                                 else -> when (tab) {
                                     0 -> {
-                                        VitalTitle("Your day, in balance", day.format(DateTimeFormatter.ofPattern("EEEE d MMMM")))
+                                        VitalTitle(stringResource(R.string.brand_tagline), day.format(DateTimeFormatter.ofPattern("EEEE d MMMM")))
                                         VitalToday(daily, entries, day, hidden, busy, vm, onPage = { page = it }, onPlan = { tab = 3 }, onFood = { tab = 1 }, onAdd = { edit(it) })
                                     }
                                     1 -> {
@@ -161,7 +169,11 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
                                         VitalExerciseLibrary { title -> edit(Kind.ACTIVITY, Entry(kind = Kind.ACTIVITY, title = title, amount = 10.0)) }
                                     }
                                     3 -> VitalPlanner(vm, entries, day, busy, { date = it.toString() }, { edit(Kind.TASK) }, { edit(it.kind, it) }, { page = "focus" })
-                                    4 -> VitalCare { page = it }
+                                    4 -> {
+                                        VitalSleep(entries, { edit(Kind.SLEEP) }, { edit(Kind.SLEEP, it) })
+                                        VitalButton(stringResource(R.string.brand_restore), { page = "relax" }, Modifier.fillMaxWidth())
+                                        OutlinedButton({ page = "care" }, Modifier.fillMaxWidth()) { Text(stringResource(R.string.brand_care_link)) }
+                                    }
                                 }
                             }
                             Spacer(Modifier.height(20.dp))
@@ -205,7 +217,7 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
     val sleep = daily.filter { it.kind == Kind.SLEEP }
     val health = all.find { it.id == "health-$day" }?.metadata()
     var dismissed by rememberSaveable(day.toString()) { mutableStateOf(false) }
-    VitalCard(VitalLime) {
+    VitalCard(VelnumiBlush) {
         Text("TODAY AT A GLANCE", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
         Text("Small steps count.", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
         if (health?.has("steps") == true) {
@@ -213,29 +225,29 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
             Text("Health Connect · ${Instant.ofEpochMilli(health.getLong("stepsAt")).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("d MMM HH:mm"))}", style = MaterialTheme.typography.bodySmall)
         }
         Text(if (tasks.isEmpty()) "Give your day a little direction." else "$done / ${tasks.size} planned activities complete")
-        if (tasks.isNotEmpty()) LinearProgressIndicator(progress = { done.toFloat() / tasks.size }, modifier = Modifier.fillMaxWidth().height(8.dp).clip(CircleShape), color = VitalInk, trackColor = VitalInk.copy(alpha = .15f))
-        TextButton(onPlan, colors = ButtonDefaults.textButtonColors(contentColor = VitalInk)) { Text("Make room in your plan"); VitalIcon(R.drawable.vd_ic_arrow_right) }
+        if (tasks.isNotEmpty()) LinearProgressIndicator(progress = { done.toFloat() / tasks.size }, modifier = Modifier.fillMaxWidth().height(8.dp).clip(CircleShape), color = VelnumiPlum, trackColor = VelnumiPlum.copy(alpha = .15f))
+        TextButton(onPlan, colors = ButtonDefaults.textButtonColors(contentColor = VelnumiPlum)) { Text("Make room in your plan"); VitalIcon(R.drawable.vd_ic_arrow_right) }
     }
-    if (!hidden) VitalCard(VitalTeal) { Text("Nourishment", style = MaterialTheme.typography.titleMedium); VitalMetric(food.takeIf { it.isNotEmpty() }?.sumOf { it.energy }, "kcal"); Text("Confirmed food entries · $day", style = MaterialTheme.typography.bodySmall); TextButton(onFood, colors = ButtonDefaults.textButtonColors(contentColor = VitalInk)) { Text("Log a meal") } }
-    PromotionBanner(1, VitalTeal)
+    if (!hidden) VitalCard(VelnumiRose) { Text("Nourishment", style = MaterialTheme.typography.titleMedium); VitalMetric(food.takeIf { it.isNotEmpty() }?.sumOf { it.energy }, "kcal"); Text("Confirmed food entries · $day", style = MaterialTheme.typography.bodySmall); TextButton(onFood, colors = ButtonDefaults.textButtonColors(contentColor = VelnumiPlum)) { Text("Log a meal") } }
+    PromotionBanner(1, VelnumiRose)
     AssistantInvitation { onPage(it) }
-    VitalCard(VitalLilac) { Text("Sleep", style = MaterialTheme.typography.titleMedium); VitalMetric(sleep.takeIf { it.isNotEmpty() }?.sumOf { it.amount / 60.0 } ?: health?.takeIf { it.has("sleepMinutes") }?.getDouble("sleepMinutes")?.div(60), "h"); Text(if (sleep.isNotEmpty()) "Self-reported sleep · $day" else if (health?.has("sleepMinutes") == true) "Health Connect · $day · last saved import" else "No sleep data yet. Add your own check-in."); TextButton({ onPage("sleep") }, colors = ButtonDefaults.textButtonColors(contentColor = VitalInk)) { Text("Sleep diary") } }
+    VitalCard(VelnumiSoftCoral) { Text("Sleep", style = MaterialTheme.typography.titleMedium); VitalMetric(sleep.takeIf { it.isNotEmpty() }?.sumOf { it.amount / 60.0 } ?: health?.takeIf { it.has("sleepMinutes") }?.getDouble("sleepMinutes")?.div(60), "h"); Text(if (sleep.isNotEmpty()) "Self-reported sleep · $day" else if (health?.has("sleepMinutes") == true) "Health Connect · $day · last saved import" else "No sleep data yet. Add your own check-in."); TextButton({ onPage("sleep") }, colors = ButtonDefaults.textButtonColors(contentColor = VelnumiPlum)) { Text("Sleep diary") } }
     VitalCard {
         Row(verticalAlignment = Alignment.CenterVertically) { VitalIcon(R.drawable.vd_ic_water); Spacer(Modifier.width(10.dp)); Text("Water", style = MaterialTheme.typography.titleMedium) }
         val water = daily.filter { it.kind == Kind.WATER }
         VitalMetric(water.takeIf { it.isNotEmpty() }?.sumOf { it.amount }, "ml")
         VitalButton("Add water", { onAdd(Kind.WATER) }, enabled = !busy)
     }
-    if (!dismissed) VitalCard(VitalAmber) {
+    if (!dismissed) VitalCard(VelnumiWarm) {
         Text("One useful next step", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Text(if (tasks.isEmpty()) "Choose one manageable task for today." else "Leave room for a pause between your plans.")
         Text("Based on your saved plan for $day. You choose what works for you.", style = MaterialTheme.typography.bodySmall)
-        TextButton({ dismissed = true }, colors = ButtonDefaults.textButtonColors(contentColor = VitalInk)) { Text("Dismiss") }
+        TextButton({ dismissed = true }, colors = ButtonDefaults.textButtonColors(contentColor = VelnumiPlum)) { Text("Dismiss") }
     }
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) { Text("Coming up", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f)); TextButton(onPlan) { Text("View plan") } }
     VitalCard { if (tasks.none { !it.taskDone(day) }) Text("Nothing waiting. Make room for what matters.") else tasks.filter { !it.taskDone(day) }.sortedBy { it.taskTime() }.take(3).forEach { Text("${it.taskTime().format(DateTimeFormatter.ofPattern("HH:mm"))}  ${it.title}", fontWeight = FontWeight.SemiBold) } }
     VitalCard {
-        Row(verticalAlignment = Alignment.CenterVertically) { Image(painterResource(R.drawable.vd_connect_device), null, Modifier.size(80.dp)); Spacer(Modifier.width(12.dp)); Text("Connect your fitness device", Modifier.weight(1f), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
+        Row(verticalAlignment = Alignment.CenterVertically) { Image(painterResource(R.drawable.velnumi_watch), null, Modifier.size(80.dp)); Spacer(Modifier.width(12.dp)); Text("Connect your fitness device", Modifier.weight(1f), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
         Text("Connect supported health data, or continue with manual tracking.")
         VitalButton("Devices and data", { onPage("devices") }, Modifier.fillMaxWidth())
     }
@@ -247,11 +259,12 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
     VitalCard { VitalIcon(R.drawable.vd_ic_info); Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold); Text(description); VitalButton(action, onClick) }
 }
 @Composable fun VitalCare(onPage: (String) -> Unit) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) { VitalIcon(R.drawable.vd_ic_care); Text(stringResource(R.string.nav_care), color = MaterialTheme.colorScheme.primary) }
     VitalTitle("Care, on your terms", "YOUR HEALTH SPACE")
-    VitalCard(VitalLilac) { VitalIcon(R.drawable.vd_ic_shield); Text("Your information. Your choice.", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold); Text("Keep personal notes and prescribed instructions privately on this phone.") }
+    VitalCard(VelnumiSoftCoral) { VitalIcon(R.drawable.vd_ic_shield); Text("Your information. Your choice.", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold); Text("Keep personal notes and prescribed instructions privately on this phone.") }
     VitalButton("Report notes", { onPage("reports") }, Modifier.fillMaxWidth())
     VitalButton("Medication", { onPage("medication") }, Modifier.fillMaxWidth())
     VitalUnavailable("Find a professional", "No verified clinician service is connected yet. Booking, payments and consultations are unavailable; no appointment will be created.", "Manage my information") { onPage("profile") }
     VitalUnavailable("Pharmacy access", "No pharmacy partner is connected. Contact your own pharmacist for availability and prescribed guidance. This app cannot confirm stock or dispense medicine.", "My medication list") { onPage("medication") }
-    VitalCard(VitalAmber) { Text("Need urgent help?", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold); Text("If symptoms feel severe or urgent, contact your local emergency service or nearest emergency department now. Do not wait for this app, AI or a booking. VitalDay is not an emergency monitoring service.") }
+    VitalCard(VelnumiWarm) { Text("Need urgent help?", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold); Text("If symptoms feel severe or urgent, contact your local emergency service or nearest emergency department now. Do not wait for this app, AI or a booking. VELNUMI is not an emergency monitoring service.") }
 }

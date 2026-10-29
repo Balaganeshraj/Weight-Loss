@@ -1,0 +1,4 @@
+<resources><style name="Theme.Wellbeing" parent="Base.Wellbeing">
+<item name="android:windowSplashScreenBackground">@color/velnumi_launcher_background</item>
+<item name="android:windowSplashScreenAnimatedIcon">@drawable/velnumi_mark</item>
+</style></resources>

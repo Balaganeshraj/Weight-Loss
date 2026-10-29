@@ -1,10 +1,10 @@
-# Google Play submission kit — VitalDay 1.1.0-vitalday-rc1
+# Google Play submission kit — VELNUMI 1.1.0-vitalday-rc1
 
 Prepared 28 October 2026. This describes the Android release, not a connected production backend. Identity, support, privacy-policy URL and owner signing remain placeholders as requested. This is a release candidate; no Play, clinical, translation or security approval is claimed.
 
 ## Listing identity
 
-- App title: VitalDay (working name; verify trademark/store availability).
+- App title: VELNUMI (working name; verify trademark/store availability).
 - Category: Health & Fitness; audience adults 18+.
 - Application ID: `[PRODUCTION_APPLICATION_ID]`; current upgrade-compatible default `com.example.wellbeing.offline`.
 - Publisher: `[PUBLISHER_LEGAL_NAME]`.
@@ -17,13 +17,13 @@ Prepared 28 October 2026. This describes the Android release, not a connected pr
 
 ## Short description (76 characters; maximum 80)
 
-Plan your day, log meals and movement, and make room for rest with VitalDay.
+Plan your day, log meals and movement, and make room for rest with VELNUMI.
 
 ## Full description (3050 characters; maximum 4,000)
 
-Your day, in balance.
+Your Life. In Balance.
 
-VitalDay brings everyday wellness and personal planning into a calm Android experience. Use the core local features without an account, wearable or subscription.
+VELNUMI brings everyday wellness and personal planning into a calm Android experience. Use the core local features without an account, wearable or subscription.
 
 TODAY
 See your saved meals, water, sleep check-ins and upcoming plans. Missing information stays unavailable rather than appearing as a made-up zero. Hide calorie and weight displays when you prefer.
@@ -41,7 +41,7 @@ REMINDERS
 Opt into local wellness, planner or medication reminders. Notification permission is optional; your in-app lists still work without it. Android and battery settings can delay delivery. Medication records preserve the instructions you enter; they never recommend a dose change or doubling a missed dose.
 
 OPTIONAL HEALTH CONNECT
-On supported devices, request separate read permissions for steps and sleep. Start or cancel a sync yourself and inspect source timestamps and partial results. Imported data stays on your phone. Food intake is never increased by wearable activity. VitalDay does not pair universally with watches or provide emergency monitoring.
+On supported devices, request separate read permissions for steps and sleep. Start or cancel a sync yourself and inspect source timestamps and partial results. Imported data stays on your phone. Food intake is never increased by wearable activity. VELNUMI does not pair universally with watches or provide emergency monitoring.
 
 PRIVATE BY DEFAULT
 Journal payloads are encrypted using Android Keystore-backed protection. Export or delete local data in settings. Imported Health Connect copies can also be deleted separately. The Android app has no Internet permission, live advertising or analytics. A separate backend foundation is included in the source project but is not connected to this app.
@@ -49,7 +49,7 @@ Journal payloads are encrypted using Android Keystore-backed protection. Export 
 CLEAR LIMITS
 English and Tamil are the language choices. Journal forms and the assistant demo have Tamil resources; some other screens remain English. Three rounded promotion spaces are placeholders, with no live advertisers. Try a scripted text assistant or hear sample replies using an installed offline device voice. No microphone recording, live AI or ElevenLabs integration. Live AI coaching, automated photo/barcode recognition, report-file processing, cloud accounts/sync, clinical bookings, paid calls and pharmacy checkout are not enabled. No provider availability or medicine stock is fabricated.
 
-Nutrition values were technically checked against a pinned secondary USDA-derived source, not independently approved by a dietitian. VitalDay supports personal wellness organization; it is not a medical device, diagnosis, prescription or substitute for professional advice. Seek local emergency care for severe or urgent symptoms instead of waiting for this app.
+Nutrition values were technically checked against a pinned secondary USDA-derived source, not independently approved by a dietitian. VELNUMI supports personal wellness organization; it is not a medical device, diagnosis, prescription or substitute for professional advice. Seek local emergency care for severe or urgent symptoms instead of waiting for this app.
 
 ## Data Safety — proposed answers for this Android build
 
@@ -85,7 +85,7 @@ App permission review:
 
 ## Privacy policy template
 
-**VitalDay Privacy Policy**
+**VELNUMI Privacy Policy**
 
 Effective date: `[EFFECTIVE_DATE]`
 
@@ -96,13 +96,13 @@ Contact: `[SUPPORT_EMAIL]`
 Public location: `[PUBLIC_HTTPS_PRIVACY_POLICY_URL]`
 
 ### Purpose and audience
-VitalDay helps adults organize personal wellbeing and daily plans. It is not a diagnosis, prescription or emergency-monitoring service. Contact a qualified professional for medical questions and local emergency services for urgent symptoms.
+VELNUMI helps adults organize personal wellbeing and daily plans. It is not a diagnosis, prescription or emergency-monitoring service. Contact a qualified professional for medical questions and local emergency services for urgent symptoms.
 
 ### Information kept on your phone
 You may enter age eligibility, optional profile information, meals, water, activity, weight/mood, sleep check-ins, tasks, shopping items, medication instructions, report notes and workout/focus logs. Health Connect access is optional and separately requests steps and sleep. Records are read on your phone and stored locally; this Android version does not upload them to the supplied backend or an AI provider.
 
 ### Health Connect choice and deletion
-Your fitness source must first write to Health Connect. VitalDay imports only granted data types when you request a sync. You may revoke access in Health Connect settings. Revocation prevents further reads; existing local copies can be deleted separately. A sync rechecks permissions and removes that day's displayed snapshot fields when permission is absent. Deleting VitalDay copies does not alter source data in Health Connect.
+Your fitness source must first write to Health Connect. VELNUMI imports only granted data types when you request a sync. You may revoke access in Health Connect settings. Revocation prevents further reads; existing local copies can be deleted separately. A sync rechecks permissions and removes that day's displayed snapshot fields when permission is absent. Deleting VELNUMI copies does not alter source data in Health Connect.
 
 ### Security and retention
 Journal payloads are encrypted with an Android Keystore key. Some technical metadata and ordinary UI/reminder preferences remain outside encrypted payloads. Android backup and device transfer are disabled. Data stays until you delete it or clear/uninstall the app. There is no developer cloud retention for this Android build. Exported JSON files are not encrypted by the app and remain at your selected destination until you remove them.

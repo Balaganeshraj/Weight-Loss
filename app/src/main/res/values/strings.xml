@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VitalDay</string>
+    <string name="app_name">VELNUMI</string>
     <string name="home">Home</string>
     <string name="food">Food</string>
     <string name="move">Move</string>
@@ -102,7 +102,7 @@
     <string name="water_missing">Water not logged</string>
     <string name="measurement_history">Measurement history</string>
     <string name="welcome_title">A little care.\nEvery day.</string>
-    <string name="welcome">Welcome to Wellbeing</string>
+    <string name="welcome">Welcome to VELNUMI</string>
     <string name="welcome_hint">A gentle space for your meals, movement and everyday wellbeing.</string>
     <string name="privacy_title">Private by design</string>
     <string name="privacy_summary">Your encrypted journal stays on this device. No account, cloud upload, advertising or analytics. You can export or delete it in Profile.</string>
@@ -173,7 +173,7 @@
     <string name="preferences_error">Use age 18–120 and optional height 100–250 cm.</string>
     <string name="save_preferences">Save preferences</string>
     <string name="reminders">Gentle reminders</string>
-    <string name="reminder_channel">Wellbeing reminders</string>
+    <string name="reminder_channel">VELNUMI reminders</string>
     <string name="reminder_channel_description">Optional daily journal reminders, without personal health details.</string>
     <string name="reminder_title">A moment for yourself</string>
     <string name="reminder_body">Your journal is here whenever you feel ready.</string>
@@ -187,7 +187,7 @@
     <string name="notifications_blocked">Notifications are blocked. You can allow them in Android settings, or keep reminders off.</string>
     <string name="open_settings">Open notification settings</string>
     <string name="sync_status">Cloud sync is off. Your journal stays on this device; no account or uploads.</string>
-    <string name="version_label">VitalDay · 1.1.0 release candidate</string>
+    <string name="version_label">VELNUMI · 1.2.0 release candidate</string>
     <string name="load_error">Your records could not be opened. Restart the app. Data has not been reset.</string>
     <string name="save_error">Could not save this change. Please try again.</string>
     <string name="timer_error">Record between 1 second and 24 hours, or discard the session.</string>
@@ -208,7 +208,7 @@
     <string name="delete_all_confirm">Delete permanently</string>
     <string name="v_medication">Medication</string>
     <string name="v_task">Task</string>
-    <string name="v_reminder_private">A scheduled check-in is ready. Open VitalDay to review it.</string>
+    <string name="v_reminder_private">A scheduled check-in is ready. Open VELNUMI to review it.</string>
     <string name="nav_today">Today</string>
     <string name="nav_plan">Plan</string>
     <string name="nav_care">Care</string>
@@ -217,7 +217,7 @@
     <string name="promo_preview">Placeholder · No live advertisement</string>
     <string name="promo_partners">Space for our future partners</string>
     <string name="assistant_title">A little support, whenever you need it</string>
-    <string name="assistant_name">VitalDay companion</string>
+    <string name="assistant_name">VELNUMI companion</string>
     <string name="assistant_intro">Find a gentle next step for your day. Choose how you would like to connect.</string>
     <string name="assistant_demo">DEMO ASSISTANT</string>
     <string name="assistant_type">Type a message</string>
@@ -253,4 +253,9 @@
     <string name="assistant_voice_missing">No offline voice is available for this language. You can read the reply, or install an offline voice in Android text-to-speech settings.</string>
     <string name="assistant_voice_error">Playback could not start. The written reply is still available.</string>
     <string name="assistant_open_plan">Open my planner</string>
+    <string name="brand_tagline">Your Life. In Balance.</string>
+    <string name="nav_nutrition">Nutrition</string>
+    <string name="nav_sleep">Sleep</string>
+    <string name="brand_restore">Mind and breathing</string>
+    <string name="brand_care_link">Care, medication and reports</string>
 </resources>

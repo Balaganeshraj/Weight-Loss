@@ -1,1 +1,10 @@
-<resources><style name="Theme.Wellbeing" parent="Theme.AppCompat.DayNight.NoActionBar"><item name="android:fontFamily">sans</item><item name="android:windowLightStatusBar">true</item><item name="android:windowActionModeOverlay">true</item></style></resources>
+<resources>
+<style name="Base.Wellbeing" parent="Theme.AppCompat.DayNight.NoActionBar">
+<item name="android:fontFamily">sans</item>
+<item name="android:windowLightStatusBar">true</item>
+<item name="android:windowActionModeOverlay">true</item>
+<item name="android:windowBackground">@color/velnumi_launcher_background</item>
+<item name="colorAccent">#B3122F</item>
+</style>
+<style name="Theme.Wellbeing" parent="Base.Wellbeing"/>
+</resources>

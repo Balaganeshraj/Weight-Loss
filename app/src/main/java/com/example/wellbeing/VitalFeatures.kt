@@ -31,7 +31,7 @@ import java.util.UUID
         VitalCard { (0L..6L).forEach { offset -> val date = start.plusDays(offset); val count = entries.count { it.taskOccurs(date) }; TextButton({ onDay(date); week = false }) { Text("${date.format(DateTimeFormatter.ofPattern("EEE d MMM"))} · $count planned") } } }
     }
     val planned = entries.filter { it.taskOccurs(day) }.sortedBy { it.taskTime() }
-    VitalCard(VitalLime) { Text("${planned.size} planned · ${planned.count { it.taskDone(day) }} complete", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold); Text("${number(planned.sumOf { it.amount })} min scheduled · ${ZoneId.systemDefault().id}"); Text("Planned meals do not count as food eaten.", style = MaterialTheme.typography.bodySmall) }
+    VitalCard(VelnumiBlush) { Text("${planned.size} planned · ${planned.count { it.taskDone(day) }} complete", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold); Text("${number(planned.sumOf { it.amount })} min scheduled · ${ZoneId.systemDefault().id}"); Text("Planned meals do not count as food eaten.", style = MaterialTheme.typography.bodySmall) }
     if (planned.isEmpty()) VitalCard { Text("A little breathing room.", style = MaterialTheme.typography.titleLarge); Text("Add a task, a meal or a moment for yourself.") }
     planned.forEach { entry -> VitalCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -52,7 +52,7 @@ import java.util.UUID
     val timer = vm.focusTimer()
     val elapsed = timer.elapsed(now, vm.boot)
     val running = timer.startedElapsed != null && timer.boot == vm.boot
-    VitalCard(VitalLilac) {
+    VitalCard(VelnumiSoftCoral) {
         Text("Your time, without pressure", style = MaterialTheme.typography.titleMedium)
         Text("%02d:%02d:%02d".format(elapsed / 3600000, elapsed / 60000 % 60, elapsed / 1000 % 60), style = MaterialTheme.typography.displaySmall.copy(fontFeatureSettings = "tnum"), fontWeight = FontWeight.Bold)
         Text("Pause whenever you need a break. Saved time survives an app restart.")
@@ -67,7 +67,7 @@ import java.util.UUID
 
 @Composable fun VitalSleep(entries: List<Entry>, onAdd: () -> Unit, onEdit: (Entry) -> Unit) {
     VitalTitle("Rest is part of the plan", "SLEEP & RECOVERY")
-    VitalCard(VitalLilac) { VitalIcon(R.drawable.vd_ic_sleep); Text("How did you rest?", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold); Text("Record your sleep and how rested you feel. This is your check-in, not a sleep diagnosis.") }
+    VitalCard(VelnumiSoftCoral) { VitalIcon(R.drawable.vd_ic_sleep); Text("How did you rest?", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold); Text("Record your sleep and how rested you feel. This is your check-in, not a sleep diagnosis.") }
     VitalButton("Add sleep check-in", onAdd, Modifier.fillMaxWidth())
     val sleep = entries.filter { it.kind == Kind.SLEEP }.sortedByDescending { it.at }
     if (sleep.isEmpty()) VitalCard { Text("No sleep data yet. Add it manually or check your connection.") }
@@ -76,7 +76,7 @@ import java.util.UUID
 
 @Composable fun VitalMedication(vm: WellbeingViewModel, entries: List<Entry>, busy: Boolean, onAdd: () -> Unit, onEdit: (Entry) -> Unit) {
     VitalTitle("Your prescribed routine", "MEDICATION")
-    VitalCard(VitalAmber) { Text("Follow your prescribed instructions. For a missed dose, consult those instructions or your pharmacist. Do not double a dose based on this app.") }
+    VitalCard(VelnumiWarm) { Text("Follow your prescribed instructions. For a missed dose, consult those instructions or your pharmacist. Do not double a dose based on this app.") }
     VitalButton("Add medication", onAdd, Modifier.fillMaxWidth(), !busy)
     val medicines = entries.filter { it.kind == Kind.MEDICATION }
     if (medicines.isEmpty()) VitalCard { Text("No medication entered. Add only what has been prescribed for you.") }
@@ -98,7 +98,7 @@ import java.util.UUID
 
 @Composable fun VitalReports(entries: List<Entry>, onAdd: () -> Unit, onEdit: (Entry) -> Unit) {
     VitalTitle("Your report notes", "PRIVATE HEALTH NOTES")
-    VitalCard(VitalTeal) { Text("Keep your own notes", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold); Text("Manually record the report name, date and questions for your clinician. File upload, OCR, AI interpretation and clinician sharing are not connected. No diagnosis or reference range is generated.") }
+    VitalCard(VelnumiRose) { Text("Keep your own notes", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold); Text("Manually record the report name, date and questions for your clinician. File upload, OCR, AI interpretation and clinician sharing are not connected. No diagnosis or reference range is generated.") }
     VitalButton("Add report note", onAdd, Modifier.fillMaxWidth())
     entries.filter { it.kind == Kind.REPORT }.sortedByDescending { it.at }.forEach { entry -> VitalCard { Text(entry.title, style = MaterialTheme.typography.titleLarge); Text(Instant.ofEpochMilli(entry.at).atZone(ZoneId.systemDefault()).toLocalDate().toString()); Text(entry.note); TextButton({ onEdit(entry) }) { Text("Edit note") } } }
 }
@@ -116,7 +116,7 @@ import java.util.UUID
     var active by rememberSaveable { mutableStateOf(false) }
     var seconds by remember { mutableIntStateOf(0) }
     LaunchedEffect(active) { seconds = 0; while (active) { delay(1000); seconds++ } }
-    VitalCard(VitalLilac) {
+    VitalCard(VelnumiSoftCoral) {
         VitalIcon(R.drawable.vd_ic_heart)
         Text(if (!active) "Breathe at your own pace" else if (seconds % 8 < 4) "Breathe in gently" else "Breathe out gently", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
         Text("Let your breathing stay comfortable. No breath holding is needed. Stop if you feel dizzy or uncomfortable.")
@@ -151,13 +151,13 @@ import java.util.UUID
     }
     VitalTitle("Your devices, your choice", "DEVICES & DATA")
     VitalCard {
-        Image(androidx.compose.ui.res.painterResource(R.drawable.vd_connect_device), null, Modifier.fillMaxWidth().height(170.dp))
+        Image(androidx.compose.ui.res.painterResource(R.drawable.velnumi_watch), null, Modifier.fillMaxWidth().height(170.dp))
         Text("Connect your fitness device", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        Text("Your watch or fitness app must first write data to Health Connect. VitalDay reads only permitted steps and sleep on this phone. No cloud upload, heart-rate access or universal Bluetooth pairing.")
+        Text("Your watch or fitness app must first write data to Health Connect. VELNUMI reads only permitted steps and sleep on this phone. No cloud upload, heart-rate access or universal Bluetooth pairing.")
         Text("Imported data is encrypted locally and can be exported or deleted in Profile and privacy. Access can be revoked in Health Connect.", style = MaterialTheme.typography.bodySmall)
     }
     if (availability != androidx.health.connect.client.HealthConnectClient.SDK_AVAILABLE) {
-        VitalCard(VitalAmber) {
+        VitalCard(VelnumiWarm) {
             Text("Health Connect needs setup or is unavailable on this device.")
             if (availability == androidx.health.connect.client.HealthConnectClient.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED) VitalButton("Open Health Connect setup", {
                 launchError = runCatching { context.startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=com.google.android.apps.healthdata".toUri())) }.isFailure
@@ -199,9 +199,9 @@ import java.util.UUID
         }) }
     }
     TextButton({ deleteImported = true }, enabled = !syncing) { Text("Delete imported health data") }
-    if (deleteImported) AlertDialog(onDismissRequest = { deleteImported = false }, title = { Text("Delete imported health data?") }, text = { Text("This removes VitalDay copies only. Source records in Health Connect and your manual journal stay unchanged.") }, confirmButton = { TextButton({ vm.clearImportedHealth(); deleteImported = false }) { Text("Delete") } }, dismissButton = { TextButton({ deleteImported = false }) { Text("Cancel") } })
+    if (deleteImported) AlertDialog(onDismissRequest = { deleteImported = false }, title = { Text("Delete imported health data?") }, text = { Text("This removes VELNUMI copies only. Source records in Health Connect and your manual journal stay unchanged.") }, confirmButton = { TextButton({ vm.clearImportedHealth(); deleteImported = false }) { Text("Delete") } }, dismissButton = { TextButton({ deleteImported = false }) { Text("Cancel") } })
     val snapshot = entries.find { it.id == "health-${LocalDate.now()}" }?.metadata()
-    if (snapshot != null) VitalCard(VitalTeal) {
+    if (snapshot != null) VitalCard(VelnumiRose) {
         Text("Last confirmed data", style = MaterialTheme.typography.titleLarge)
         if (snapshot.has("steps")) { VitalMetric(snapshot.getDouble("steps"), "steps"); Text("Health Connect · ${Instant.ofEpochMilli(snapshot.getLong("stepsAt")).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("d MMM HH:mm"))}") }
         if (snapshot.has("sleepMinutes")) { VitalMetric(snapshot.getDouble("sleepMinutes") / 60, "h"); Text("Sleep sessions ending today · ${Instant.ofEpochMilli(snapshot.getLong("sleepAt")).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("d MMM HH:mm"))}") }
@@ -298,8 +298,8 @@ import java.util.UUID
     var exercise by rememberSaveable { mutableStateOf("") }
     var reps by rememberSaveable { mutableStateOf("") }
     var load by rememberSaveable { mutableStateOf("") }
-    VitalCard(VitalAmber) { Text("Stop for pain, dizziness or unusual breathlessness. Seek appropriate care for concerning symptoms. Follow a routine suited to you; these logs do not prescribe exercises or loads.") }
-    VitalCard(VitalLime) { Text("%02d:%02d".format(elapsed / 60000, elapsed / 1000 % 60), style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold); Text("Pause for rest. Completed sets are saved on this phone.") }
+    VitalCard(VelnumiWarm) { Text("Stop for pain, dizziness or unusual breathlessness. Seek appropriate care for concerning symptoms. Follow a routine suited to you; these logs do not prescribe exercises or loads.") }
+    VitalCard(VelnumiBlush) { Text("%02d:%02d".format(elapsed / 60000, elapsed / 1000 % 60), style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold); Text("Pause for rest. Completed sets are saved on this phone.") }
     VitalButton(if (running) "Pause" else "Start or resume", { vm.updateWorkout(if (running) timer.pause(now, vm.boot) else TimerState(elapsed, now, vm.boot)) }, Modifier.fillMaxWidth(), !busy)
     VitalCard {
         OutlinedTextField(exercise, { exercise = it.take(120) }, label = { Text("Exercise") }, modifier = Modifier.fillMaxWidth())
@@ -330,7 +330,7 @@ import java.util.UUID
 
 @Composable fun VitalNutrients(entries: List<Entry>) {
     val food = entries.filter { it.kind == Kind.FOOD }
-    VitalCard(VitalTeal) {
+    VitalCard(VelnumiRose) {
         Text("Your nourishment", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         val nutrients = listOf("Protein" to "proteinG", "Carbohydrate" to "carbohydrateG", "Fat" to "fatG", "Fibre" to "fiberG", "Sodium" to "sodiumMg")
         nutrients.forEach { (label, key) ->

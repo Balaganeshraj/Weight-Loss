@@ -19,17 +19,17 @@ class HealthPrivacyActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkColorScheme(primary = VitalLime, background = Color(0xFF101510)) else lightColorScheme(primary = Color(0xFF164F40), background = Color(0xFFF7F8F2))) {
+            MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkColors else lightColors) {
                 Surface(Modifier.fillMaxSize()) {
                     Column(Modifier.safeDrawingPadding().verticalScroll(rememberScrollState()).padding(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                        Text("VitalDay · Health Connect", style = MaterialTheme.typography.headlineMedium)
+                        Text("VELNUMI · Health Connect", style = MaterialTheme.typography.headlineMedium)
                         Text("Your health data, on your phone", style = MaterialTheme.typography.titleLarge)
-                        Text("Steps and sleep are separate, optional read permissions. VitalDay reads only the types you grant when you start a sync. It does not write to Health Connect or read heart rate, location or contacts.")
+                        Text("Steps and sleep are separate, optional read permissions. VELNUMI reads only the types you grant when you start a sync. It does not write to Health Connect or read heart rate, location or contacts.")
                         Text("Imported readings are encrypted locally using an Android Keystore key. They appear in your personal daily overview and Devices and data screen with source timestamps. Food intake is never changed by device activity.")
-                        Text("No Health Connect data is uploaded to a server, shared with an AI provider, used for ads or sold by this Android build. It has no Internet permission. A fitness source may have its own data practices outside VitalDay.")
-                        Text("Revoke access in Health Connect settings to prevent new reads. Remove saved VitalDay copies with Delete imported health data in Devices and data, or delete all local data in Profile and privacy. This does not delete source records or files you previously exported.")
+                        Text("No Health Connect data is uploaded to a server, shared with an AI provider, used for ads or sold by this Android build. It has no Internet permission. A fitness source may have its own data practices outside VELNUMI.")
+                        Text("Revoke access in Health Connect settings to prevent new reads. Remove saved VELNUMI copies with Delete imported health data in Devices and data, or delete all local data in Profile and privacy. This does not delete source records or files you previously exported.")
                         Text("Exports are plain JSON at the location you choose. Protect those files separately. Backups and device transfer are disabled. Clearing app storage or uninstalling removes the local journal.")
-                        Text("VitalDay is a wellness organizer, not diagnosis, clinical monitoring or an emergency service. Missing or old readings do not establish that you are healthy.")
+                        Text("VELNUMI is a wellness organizer, not diagnosis, clinical monitoring or an emergency service. Missing or old readings do not establish that you are healthy.")
                         Button(onClick = { finish() }, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text("Close") }
                     }
                 }

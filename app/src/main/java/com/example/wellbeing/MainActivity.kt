@@ -48,11 +48,11 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.roundToInt
 
-private val Forest = Color(0xFF164F40)
-private val Lime = Color(0xFFD4F568)
-private val Cream = Color(0xFFF7F8F2)
-private val lightColors = lightColorScheme(primary = Forest, onPrimary = Color.White, primaryContainer = Color(0xFFE3EDDE), onPrimaryContainer = Forest, secondary = Color(0xFF596543), secondaryContainer = Lime, surface = Cream, background = Cream, surfaceContainer = Color.White, surfaceContainerHigh = Color(0xFFEEF1E9), outlineVariant = Color(0xFFDCE3D8))
-private val darkColors = darkColorScheme(primary = Lime, onPrimary = Color(0xFF17210D), primaryContainer = Color(0xFF354026), onPrimaryContainer = Lime, secondary = Color(0xFFBCE9DE), secondaryContainer = Color(0xFF294B43), surface = Color(0xFF101510), background = Color(0xFF101510), surfaceContainer = Color(0xFF20271F), surfaceContainerHigh = Color(0xFF2A3428), onSurface = Color(0xFFF6F8F1), onSurfaceVariant = Color(0xFFB4BEAE), outlineVariant = Color(0xFF3B4738))
+private val Forest = VelnumiCrimson
+private val Lime = VelnumiBlush
+private val Cream = VelnumiWarm
+internal val lightColors = lightColorScheme(primary = VelnumiCrimson, onPrimary = Color.White, primaryContainer = VelnumiBlush, onPrimaryContainer = VelnumiPlum, secondary = VelnumiCrimson, onSecondary = Color.White, secondaryContainer = VelnumiBlush, onSecondaryContainer = VelnumiPlum, tertiary = VelnumiRuby, surface = VelnumiWarm, background = VelnumiWarm, onBackground = VelnumiPlum, onSurface = VelnumiPlum, onSurfaceVariant = Color(0xFF70515E), surfaceContainer = Color.White, surfaceContainerHigh = VelnumiRose, outline = Color(0xFF886471), outlineVariant = Color(0xFFE6C6CD))
+internal val darkColors = darkColorScheme(primary = VelnumiBlush, onPrimary = VelnumiPlum, primaryContainer = Color(0xFF692637), onPrimaryContainer = VelnumiBlush, secondary = VelnumiCoral, onSecondary = VelnumiPlum, secondaryContainer = Color(0xFF572D3C), onSecondaryContainer = VelnumiBlush, tertiary = VelnumiCoral, surface = Color(0xFF21131B), background = Color(0xFF21131B), onBackground = VelnumiWarm, surfaceContainer = VelnumiPlum, surfaceContainerHigh = Color(0xFF4B2B3A), onSurface = VelnumiWarm, onSurfaceVariant = Color(0xFFE7C3CE), outline = Color(0xFFBF99A7), outlineVariant = Color(0xFF71515E))
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Language.apply(this)
@@ -63,6 +63,12 @@ class MainActivity : AppCompatActivity() {
             val dark by vm.dark.collectAsStateWithLifecycle()
             val systemTheme by vm.systemTheme.collectAsStateWithLifecycle()
             val actualDark = if (systemTheme) androidx.compose.foundation.isSystemInDarkTheme() else dark
+            SideEffect {
+                enableEdgeToEdge(
+                    statusBarStyle = androidx.activity.SystemBarStyle.auto(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT) { actualDark },
+                    navigationBarStyle = androidx.activity.SystemBarStyle.auto(android.graphics.Color.rgb(252, 246, 244), android.graphics.Color.rgb(33, 19, 27)) { actualDark }
+                )
+            }
             MaterialTheme(colorScheme = if (actualDark) darkColors else lightColors, shapes = Shapes(small = RoundedCornerShape(12.dp), medium = RoundedCornerShape(20.dp), large = RoundedCornerShape(28.dp))) {
                 Surface(Modifier.fillMaxSize()) { VitalDayApp(vm) }
             }
@@ -163,7 +169,7 @@ internal fun timestamp(day: LocalDate): Long = if (day == LocalDate.now()) Syste
         Column(Modifier.fillMaxWidth().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) { Icon(Icons.Outlined.Eco, null, tint = Lime); Spacer(Modifier.width(8.dp)); Text(ctx.getString(R.string.daily_nourishment), color = Lime, style = MaterialTheme.typography.labelLarge) }
             Text(if (foods.isEmpty()) ctx.getString(R.string.fresh_page) else ctx.getString(R.string.kcal_value, number(foods.sumOf { it.energy })), color = Color.White, style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.SemiBold)
-            Text(if (foods.isEmpty()) ctx.getString(R.string.no_food) else ctx.getString(R.string.estimated_total), color = Color(0xFFE0EADB))
+            Text(if (foods.isEmpty()) ctx.getString(R.string.no_food) else ctx.getString(R.string.estimated_total), color = VelnumiBlush)
             Button(onClick = onFood, colors = ButtonDefaults.buttonColors(containerColor = Lime, contentColor = Forest), contentPadding = PaddingValues(horizontal = 20.dp, vertical = 14.dp)) { Text(ctx.getString(R.string.log_meal)); Spacer(Modifier.width(10.dp)); Icon(Icons.AutoMirrored.Outlined.ArrowForward, null, Modifier.size(18.dp)) }
         }
     }
@@ -171,7 +177,7 @@ internal fun timestamp(day: LocalDate): Long = if (day == LocalDate.now()) Syste
         val cell = if (maxWidth < 340.dp) maxWidth else (maxWidth - 12.dp) / 2
         FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Panel(Modifier.width(cell)) {
-                Icon(Icons.Outlined.WaterDrop, null, tint = Color(0xFF3A7185))
+                Icon(Icons.Outlined.WaterDrop, null, tint = VelnumiCrimson)
                 Text(ctx.getString(R.string.hydration), fontWeight = FontWeight.SemiBold)
                 val water = entries.filter { it.kind == Kind.WATER }
                 Text(if (water.isEmpty()) ctx.getString(R.string.not_logged) else ctx.getString(R.string.ml_value, number(water.sumOf { it.amount })), style = MaterialTheme.typography.titleLarge)
@@ -342,7 +348,8 @@ private fun recipeTitle(item: Recipe) = when(recipes.indexOf(item)) { 0 -> R.str
     val valid = age.toIntOrNull() in 18..120
     Column(Modifier.fillMaxSize().safeDrawingPadding().verticalScroll(rememberScrollState()).padding(28.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
         Spacer(Modifier.height(20.dp))
-        Surface(shape = RoundedCornerShape(28.dp), color = Forest) { Icon(Icons.Outlined.Spa, null, Modifier.padding(28.dp).size(52.dp), tint = Lime) }
+        androidx.compose.foundation.Image(androidx.compose.ui.res.painterResource(R.drawable.ic_wellbeing), ctx.getString(R.string.app_name), Modifier.size(108.dp).clip(RoundedCornerShape(28.dp)))
+        Text(ctx.getString(R.string.brand_tagline), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
         Text(ctx.getString(R.string.welcome_title), style = MaterialTheme.typography.displayMedium, fontWeight = FontWeight.Bold, letterSpacing = (-1).sp)
         LanguagePicker()
         Text(ctx.getString(R.string.welcome), style = MaterialTheme.typography.titleLarge)

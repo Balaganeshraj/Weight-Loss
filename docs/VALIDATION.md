@@ -1,6 +1,15 @@
-# VitalDay validation
+# VELNUMI validation
 
-## Current update — 1.1.1-vitalday-rc2 (version code 4)
+## Current release — 1.2.0-velnumi-rc1 (version code 5)
+
+- Full release build passed: debug/release APK, unsigned AAB, 33 JVM tests, debug/release lint and instrumentation APK compilation.
+- 258 English/Tamil string keys and placeholders match; no missing-translation lint warnings. Some existing feature screens still contain English literals.
+- Bundletool validates the AAB; development-signed optimized APK passes signature and 16 KB ZIP alignment checks.
+- APK metadata identifies VELNUMI version 1.2.0, retaining the prior application ID for data/update compatibility.
+- API 28 brand and assistant flow checks passed: VELNUMI header/tagline, Nutrition navigation, Sleep-to-Care access, light/dark theme, typed English/Tamil demo responses and transcript clearing. Visual review identified and corrected narrow-label wrapping and selected-icon contrast; the corrected brand flow passed again and light/dark captures were visually checked.
+- Branding includes native vector V/leaf reconstruction, adaptive and monochrome launcher assets, notification mark, warm/red/plum palettes, onboarding, header, disclosures and release names. Original vector artwork approval and API 31/33 launcher/splash behavior still need physical-device review.
+
+## Previous update — 1.1.1-vitalday-rc2 (version code 4)
 
 - Clean full release build passed: debug/release APK, unsigned AAB, 33 JVM tests, debug/release lint, and instrumentation APK compilation.
 - 253 resource keys and placeholders match across English and Tamil. Sinhala removed from settings, locale configuration and resource packaging. Some earlier VitalDay flows remain English-only.

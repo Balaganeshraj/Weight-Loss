@@ -11,8 +11,8 @@ android {
         applicationId = providers.gradleProperty("wellbeing.applicationId").orElse("com.example.wellbeing.offline").get()
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.1.1-vitalday-rc2"
+        versionCode = 5
+        versionName = "1.2.0-velnumi-rc1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { compose = true }
