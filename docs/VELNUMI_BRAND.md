@@ -1,4 +1,4 @@
-# VELNUMI
+# Velnumi
 
 **Your Life. In Balance.**
 
@@ -22,3 +22,5 @@ Navigation follows the board: Today (home), Nutrition (apple), Move (runner), Pl
 Brand naming is applied to app label, header, onboarding, notifications, assistant, Health Connect disclosure, listing and delivery filenames. Internal package/class/database/encryption identities remain unchanged to protect update/data compatibility. Historical supplied VitalDay specifications remain preserved under docs/vitalday.
 
 English and Tamil remain the only language choices. The brand name/tagline stay in English in both locales. Some older feature screens still contain English text; this rebrand does not claim complete Tamil localization.
+
+Name casing update: use **Velnumi** everywhere in current UI and listings, with only the V uppercase. The logo symbol and tagline remain unchanged. Earlier screenshots retain the previous uppercase wordmark.

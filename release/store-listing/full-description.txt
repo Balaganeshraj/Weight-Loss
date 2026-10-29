@@ -1,6 +1,6 @@
 Your Life. In Balance.
 
-VELNUMI brings everyday wellness and personal planning into a calm Android experience. Use the core local features without an account, wearable or subscription.
+Velnumi brings everyday wellness and personal planning into a calm Android experience. Use the core local features without an account, wearable or subscription.
 
 TODAY
 See your saved meals, water, sleep check-ins and upcoming plans. Missing information stays unavailable rather than appearing as a made-up zero. Hide calorie and weight displays when you prefer.
@@ -18,7 +18,7 @@ REMINDERS
 Opt into local wellness, planner or medication reminders. Notification permission is optional; your in-app lists still work without it. Android and battery settings can delay delivery. Medication records preserve the instructions you enter; they never recommend a dose change or doubling a missed dose.
 
 OPTIONAL HEALTH CONNECT
-On supported devices, request separate read permissions for steps and sleep. Start or cancel a sync yourself and inspect source timestamps and partial results. Imported data stays on your phone. Food intake is never increased by wearable activity. VELNUMI does not pair universally with watches or provide emergency monitoring.
+On supported devices, request separate read permissions for steps and sleep. Start or cancel a sync yourself and inspect source timestamps and partial results. Imported data stays on your phone. Food intake is never increased by wearable activity. Velnumi does not pair universally with watches or provide emergency monitoring.
 
 PRIVATE BY DEFAULT
 Journal payloads are encrypted using Android Keystore-backed protection. Export or delete local data in settings. Imported Health Connect copies can also be deleted separately. The Android app has no Internet permission, live advertising or analytics. A separate backend foundation is included in the source project but is not connected to this app.
@@ -26,4 +26,4 @@ Journal payloads are encrypted using Android Keystore-backed protection. Export 
 CLEAR LIMITS
 English and Tamil are the language choices. Journal forms and the assistant demo have Tamil resources; some other screens remain English. Three rounded promotion spaces are placeholders, with no live advertisers. Try a scripted text assistant or hear sample replies using an installed offline device voice. No microphone recording, live AI or ElevenLabs integration. Live AI coaching, automated photo/barcode recognition, report-file processing, cloud accounts/sync, clinical bookings, paid calls and pharmacy checkout are not enabled. No provider availability or medicine stock is fabricated.
 
-Nutrition values were technically checked against a pinned secondary USDA-derived source, not independently approved by a dietitian. VELNUMI supports personal wellness organization; it is not a medical device, diagnosis, prescription or substitute for professional advice. Seek local emergency care for severe or urgent symptoms instead of waiting for this app.
+Nutrition values were technically checked against a pinned secondary USDA-derived source, not independently approved by a dietitian. Velnumi supports personal wellness organization; it is not a medical device, diagnosis, prescription or substitute for professional advice. Seek local emergency care for severe or urgent symptoms instead of waiting for this app.

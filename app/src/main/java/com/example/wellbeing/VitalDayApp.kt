@@ -116,7 +116,7 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
                                 if (page.isNotEmpty()) IconButton({ page = "" }) { VitalIcon(R.drawable.vd_ic_chevron_left, description = "Back") }
                                 Image(painterResource(R.drawable.velnumi_mark), null, Modifier.size(40.dp))
                                 Column(Modifier.weight(1f).padding(start = 6.dp)) {
-                                    Text("VELNUMI", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, letterSpacing = 1.5.sp, color = MaterialTheme.colorScheme.primary)
+                                    Text("Velnumi", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, letterSpacing = 1.5.sp, color = MaterialTheme.colorScheme.primary)
                                     Text(stringResource(R.string.brand_tagline), style = MaterialTheme.typography.labelSmall)
                                 }
                                 IconButton({ page = "profile" }) { VitalIcon(R.drawable.vd_ic_settings, description = "Profile and privacy") }
@@ -266,5 +266,5 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
     VitalButton("Medication", { onPage("medication") }, Modifier.fillMaxWidth())
     VitalUnavailable("Find a professional", "No verified clinician service is connected yet. Booking, payments and consultations are unavailable; no appointment will be created.", "Manage my information") { onPage("profile") }
     VitalUnavailable("Pharmacy access", "No pharmacy partner is connected. Contact your own pharmacist for availability and prescribed guidance. This app cannot confirm stock or dispense medicine.", "My medication list") { onPage("medication") }
-    VitalCard(VelnumiWarm) { Text("Need urgent help?", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold); Text("If symptoms feel severe or urgent, contact your local emergency service or nearest emergency department now. Do not wait for this app, AI or a booking. VELNUMI is not an emergency monitoring service.") }
+    VitalCard(VelnumiWarm) { Text("Need urgent help?", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold); Text("If symptoms feel severe or urgent, contact your local emergency service or nearest emergency department now. Do not wait for this app, AI or a booking. Velnumi is not an emergency monitoring service.") }
 }

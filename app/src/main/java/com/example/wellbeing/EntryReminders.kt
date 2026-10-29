@@ -77,7 +77,7 @@ class EntryReminderWorker(context: Context, params: WorkerParameters) : Coroutin
                 manager.createNotificationChannel(NotificationChannel(channel, localized.getString(if (medication) R.string.v_medication else R.string.v_task), NotificationManager.IMPORTANCE_DEFAULT).apply { lockscreenVisibility = Notification.VISIBILITY_PRIVATE })
                 val intent = Intent(applicationContext, MainActivity::class.java).putExtra("destination", if (medication) "medication" else "plan")
                 val open = PendingIntent.getActivity(applicationContext, if (medication) 4101 else 4102, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-                val notification = NotificationCompat.Builder(applicationContext, channel).setSmallIcon(R.drawable.ic_notification).setContentTitle("VELNUMI")
+                val notification = NotificationCompat.Builder(applicationContext, channel).setSmallIcon(R.drawable.ic_notification).setContentTitle("Velnumi")
                     .setContentText(localized.getString(R.string.v_reminder_private)).setContentIntent(open).setVisibility(NotificationCompat.VISIBILITY_PRIVATE).setAutoCancel(true).build()
                 try { NotificationManagerCompat.from(applicationContext).notify(id, 1, notification) } catch (_: SecurityException) { /* A revocation may race with the check. */ }
             }

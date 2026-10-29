@@ -153,7 +153,7 @@ import java.util.UUID
     VitalCard {
         Image(androidx.compose.ui.res.painterResource(R.drawable.velnumi_watch), null, Modifier.fillMaxWidth().height(170.dp))
         Text("Connect your fitness device", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        Text("Your watch or fitness app must first write data to Health Connect. VELNUMI reads only permitted steps and sleep on this phone. No cloud upload, heart-rate access or universal Bluetooth pairing.")
+        Text("Your watch or fitness app must first write data to Health Connect. Velnumi reads only permitted steps and sleep on this phone. No cloud upload, heart-rate access or universal Bluetooth pairing.")
         Text("Imported data is encrypted locally and can be exported or deleted in Profile and privacy. Access can be revoked in Health Connect.", style = MaterialTheme.typography.bodySmall)
     }
     if (availability != androidx.health.connect.client.HealthConnectClient.SDK_AVAILABLE) {
@@ -199,7 +199,7 @@ import java.util.UUID
         }) }
     }
     TextButton({ deleteImported = true }, enabled = !syncing) { Text("Delete imported health data") }
-    if (deleteImported) AlertDialog(onDismissRequest = { deleteImported = false }, title = { Text("Delete imported health data?") }, text = { Text("This removes VELNUMI copies only. Source records in Health Connect and your manual journal stay unchanged.") }, confirmButton = { TextButton({ vm.clearImportedHealth(); deleteImported = false }) { Text("Delete") } }, dismissButton = { TextButton({ deleteImported = false }) { Text("Cancel") } })
+    if (deleteImported) AlertDialog(onDismissRequest = { deleteImported = false }, title = { Text("Delete imported health data?") }, text = { Text("This removes Velnumi copies only. Source records in Health Connect and your manual journal stay unchanged.") }, confirmButton = { TextButton({ vm.clearImportedHealth(); deleteImported = false }) { Text("Delete") } }, dismissButton = { TextButton({ deleteImported = false }) { Text("Cancel") } })
     val snapshot = entries.find { it.id == "health-${LocalDate.now()}" }?.metadata()
     if (snapshot != null) VitalCard(VelnumiRose) {
         Text("Last confirmed data", style = MaterialTheme.typography.titleLarge)

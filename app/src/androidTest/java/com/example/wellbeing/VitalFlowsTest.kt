@@ -34,7 +34,7 @@ class VitalFlowsTest {
         compose.waitUntil(60000) { compose.onAllNodesWithText("Review proposal", substring = true).fetchSemanticsNodes().isNotEmpty() }
         compose.onAllNodes(isToggleable()).onFirst().performScrollTo().performClick()
         compose.waitUntil(30000) { compose.onAllNodesWithText("1 planned · 1 complete").fetchSemanticsNodes().isNotEmpty() }
-        compose.onNodeWithText("VELNUMI").performScrollTo()
+        compose.onNodeWithText("Velnumi").performScrollTo()
         compose.onRoot().captureToImage().asAndroidBitmap().let { bitmap ->
             val context = InstrumentationRegistry.getInstrumentation().targetContext
             java.io.File(context.getExternalFilesDir(null), "vitalday-plan.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }

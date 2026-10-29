@@ -20,7 +20,7 @@ class BrandFlowTest {
                 saveProfile(Profile(age = 30)); setting("system_theme", false); setDark(false)
             }
         }
-        compose.waitUntil(60000) { compose.onAllNodesWithText("VELNUMI").fetchSemanticsNodes().isNotEmpty() }
+        compose.waitUntil(60000) { compose.onAllNodesWithText("Velnumi").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("Nutrition", substring = false).assertExists()
         compose.onAllNodesWithText("Your Life. In Balance.").onFirst().assertExists()
         capture("velnumi-today.png")

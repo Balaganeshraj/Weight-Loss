@@ -1,10 +1,10 @@
-# VELNUMI delivery — 1.2.0-velnumi-rc1
+# Velnumi delivery — 1.2.1-velnumi-rc1
 
 The uploaded specifications describe an 80-item, four-stage product programme. They are requirements, not evidence that accounts, providers, live stock, AI services or clinical review already exist. This delivery implements a native, unrestricted local wellness experience and a separately runnable backend foundation. It is **not the complete Stage A–D commercial/clinical product**.
 
 ## Android implementation
 
-- Native Compose Today / Nutrition / Move / Plan / Sleep navigation, narrow-screen bottom navigation and wide-screen rail; supplied VELNUMI red/blush/plum palette, native V/leaf mark, line icons and watch illustration, 48 dp controls, system/manual theme and app/system reduced-motion handling.
+- Native Compose Today / Nutrition / Move / Plan / Sleep navigation, narrow-screen bottom navigation and wide-screen rail; supplied Velnumi red/blush/plum palette, native V/leaf mark, line icons and watch illustration, 48 dp controls, system/manual theme and app/system reduced-motion handling.
 - Today shows actual journal/planner data, nullable metrics and optional last-confirmed Health Connect data with source timestamps. No fictional steps, sleep, provider availability or nutrition measurements.
 - Existing food reference search/manual portions, encrypted food/water/activity/weight/mood journal, recipes and disclaimer remain. Macro totals stay unavailable when any food lacks the nutrient. Device activity never changes food intake.
 - Task and meal-plan CRUD, day/week views, priority, project, local-date recurrence, per-occurrence completion, fixed-time conflict checks around the selected date, and an editable shopping list. Planned meals do not count as eaten. This is manual planning; no AI/calendar synchronization or automatic shopping consolidation is claimed.
@@ -19,7 +19,7 @@ The uploaded specifications describe an 80-item, four-stage product programme. T
 
 ## Language and accessibility scope
 
-English and Tamil are now the only language choices; Sinhala resources have been removed and previous Sinhala settings fall back to English. Journal forms, navigation, promotion placeholders and assistant screens have matching English/Tamil resources. Other existing VELNUMI flows still have English literals, so this is not complete app-wide Tamil localization. Native-language review and broad accessibility/device checks remain release gates.
+English and Tamil are now the only language choices; Sinhala resources have been removed and previous Sinhala settings fall back to English. Journal forms, navigation, promotion placeholders and assistant screens have matching English/Tamil resources. Other existing Velnumi flows still have English literals, so this is not complete app-wide Tamil localization. Native-language review and broad accessibility/device checks remain release gates.
 
 ### Promotion and assistant update
 - Three static rounded 16:9 company promotion placeholders on Today. One featured slot and two secondary slots; secondary slots stack on narrow screens and sit side by side on wider screens. No live advertisements, ad SDK, company claims, tracking, placement purchase or backend inventory system.
@@ -36,15 +36,15 @@ No production deployment, identity-provider provisioning, Android account/cloud 
 ## Explicit remaining work
 
 - Complete the remaining Stage A items: production identity/biometrics, fully reviewed recipes with ingredient weights/substitutions, dietitian-approved target flow, barcode service, licensed exercise instruction/programmes, fully consolidated meal shopping, multi-dose/snooze medication workflows and notification preference granularity.
-- Complete localized new screens if Tamil is to be advertised for the full VELNUMI experience.
+- Complete localized new screens if Tamil is to be advertised for the full Velnumi experience.
 - Configure and test cloud identity/sync, AI consent/evaluation, report processing, source-change/history handling and any device vendor integrations before enabling Stage B services.
 - Obtain provider/pharmacy/payment/call contracts and implement audited staff workflows and transactional commerce before Stage C. Stage D remains future work.
 - Complete stable-device, accessibility, content/clinical/security review, production identity and signing, hosted privacy policy and Play declarations before publication. Existing placeholder approvals remain in effect; they do not constitute these reviews.
 
 ## Download and update
 
-GitHub Actions builds `VELNUMI-Android-download`: installable development-signed APK, unsigned AAB, complete source ZIP, submission/signing documents and this status report. A build success is not Play approval. Development certificates can differ between CI runs; export your journal before any uninstall needed for a signature mismatch. Use an owner-controlled signing key for stable production updates.
+GitHub Actions builds `Velnumi-Android-download`: installable development-signed APK, unsigned AAB, complete source ZIP, submission/signing documents and this status report. A build success is not Play approval. Development certificates can differ between CI runs; export your journal before any uninstall needed for a signature mismatch. Use an owner-controlled signing key for stable production updates.
 
-## VELNUMI brand update
+## Velnumi brand update
 
 Version 1.2.0 applies the supplied red/blush/plum palette, V/leaf adaptive launcher and monochrome notification icon, Today/Nutrition/Move/Plan/Sleep navigation, and the exact tagline “Your Life. In Balance.” Care remains available from Sleep. Package ID, encrypted storage and data schema are preserved. See `docs/VELNUMI_BRAND.md`.
