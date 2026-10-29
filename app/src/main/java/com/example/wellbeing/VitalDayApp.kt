@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
@@ -94,7 +95,7 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
     if (profile == null) { Box(Modifier.fillMaxSize()) { Onboarding(busy, vm::saveProfile); SnackbarHost(snack, Modifier.align(Alignment.BottomCenter)) }; return }
     BackHandler(page.isNotEmpty()) { page = "" }
     val daily = entries.filter { WellnessMath.onDate(it, day, ZoneId.systemDefault()) }
-    val titles = listOf("Today", "Food", "Move", "Plan", "Care")
+    val titles = listOf(R.string.nav_today, R.string.food, R.string.move, R.string.nav_plan, R.string.nav_care).map { stringResource(it) }
     val icons = listOf(R.drawable.vd_ic_home, R.drawable.vd_ic_food, R.drawable.vd_ic_dumbbell, R.drawable.vd_ic_calendar, R.drawable.vd_ic_care)
     CompositionLocalProvider(LocalVitalMotion provides (reduced || !ValueAnimator.areAnimatorsEnabled())) {
         BoxWithConstraints {
@@ -127,7 +128,7 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
                                 "insights" -> if (hidden) VitalCard { Text("Calorie and weight displays are hidden. Change this in Profile and privacy.") } else InsightsScreen(entries, profile, { edit(Kind.WEIGHT) }, { edit(it.kind, it) })
                                 "devices" -> VitalDeviceScreen(vm, entries)
                                 "reports" -> VitalReports(entries, { edit(Kind.REPORT) }, { edit(Kind.REPORT, it) })
-                                "coach" -> VitalUnavailable("Your optional coach", "Cloud AI is not connected. Your private journal stays on this phone. You can still plan your day and track your wellbeing.", "Open planner") { page = ""; tab = 3 }
+                                "coach", "coach_voice" -> VitalAssistant(startWithVoice = page == "coach_voice", onPlan = { page = ""; tab = 3 })
                                 "medication" -> VitalMedication(vm, entries, busy, { edit(Kind.MEDICATION) }, { edit(Kind.MEDICATION, it) })
                                 "sleep" -> VitalSleep(entries, { edit(Kind.SLEEP) }, { edit(Kind.SLEEP, it) })
                                 "relax" -> VitalBreathing()
@@ -216,6 +217,8 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
         TextButton(onPlan, colors = ButtonDefaults.textButtonColors(contentColor = VitalInk)) { Text("Make room in your plan"); VitalIcon(R.drawable.vd_ic_arrow_right) }
     }
     if (!hidden) VitalCard(VitalTeal) { Text("Nourishment", style = MaterialTheme.typography.titleMedium); VitalMetric(food.takeIf { it.isNotEmpty() }?.sumOf { it.energy }, "kcal"); Text("Confirmed food entries · $day", style = MaterialTheme.typography.bodySmall); TextButton(onFood, colors = ButtonDefaults.textButtonColors(contentColor = VitalInk)) { Text("Log a meal") } }
+    PromotionBanner(1, VitalTeal)
+    AssistantInvitation { onPage(it) }
     VitalCard(VitalLilac) { Text("Sleep", style = MaterialTheme.typography.titleMedium); VitalMetric(sleep.takeIf { it.isNotEmpty() }?.sumOf { it.amount / 60.0 } ?: health?.takeIf { it.has("sleepMinutes") }?.getDouble("sleepMinutes")?.div(60), "h"); Text(if (sleep.isNotEmpty()) "Self-reported sleep · $day" else if (health?.has("sleepMinutes") == true) "Health Connect · $day · last saved import" else "No sleep data yet. Add your own check-in."); TextButton({ onPage("sleep") }, colors = ButtonDefaults.textButtonColors(contentColor = VitalInk)) { Text("Sleep diary") } }
     VitalCard {
         Row(verticalAlignment = Alignment.CenterVertically) { VitalIcon(R.drawable.vd_ic_water); Spacer(Modifier.width(10.dp)); Text("Water", style = MaterialTheme.typography.titleMedium) }
@@ -236,6 +239,7 @@ val LocalVitalMotion = staticCompositionLocalOf { false }
         Text("Connect supported health data, or continue with manual tracking.")
         VitalButton("Devices and data", { onPage("devices") }, Modifier.fillMaxWidth())
     }
+    PromotionPair()
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { OutlinedButton({ onPage("insights") }) { Text("Trends") }; OutlinedButton({ onPage("coach") }) { Text("Coach") }; OutlinedButton({ onPage("medication") }) { Text("Medication") } }
 }
 

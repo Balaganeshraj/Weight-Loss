@@ -11,12 +11,12 @@ android {
         applicationId = providers.gradleProperty("wellbeing.applicationId").orElse("com.example.wellbeing.offline").get()
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.1.0-vitalday-rc1"
+        versionCode = 4
+        versionName = "1.1.1-vitalday-rc2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { compose = true }
-    bundle { language { enableSplit = false } } // All three languages work offline after installation.
+    bundle { language { enableSplit = false } } // Both supported languages work offline after installation.
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
     val signingNames = listOf("WELLBEING_KEYSTORE", "WELLBEING_STORE_PASSWORD", "WELLBEING_KEY_ALIAS", "WELLBEING_KEY_PASSWORD")
@@ -38,7 +38,7 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
-    androidResources { localeFilters += listOf("en", "si", "ta") }
+    androidResources { localeFilters += listOf("en", "ta") }
     lint {
         abortOnError = true
         warningsAsErrors = true

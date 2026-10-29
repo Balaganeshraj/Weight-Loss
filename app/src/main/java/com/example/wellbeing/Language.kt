@@ -12,13 +12,13 @@ object Language {
     fun tag(context: Context): String {
         if (android.os.Build.VERSION.SDK_INT >= 33) {
             val system = context.getSystemService(android.app.LocaleManager::class.java).applicationLocales
-            if (!system.isEmpty && system[0].language in setOf("en", "si", "ta")) return system[0].language
+            if (!system.isEmpty && system[0].language in setOf("en", "ta")) return system[0].language
         }
-        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("tag", "en") ?: "en"
+        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString("tag", "en")?.takeIf { it in setOf("en", "ta") } ?: "en"
     }
     fun apply(context: Context) = AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag(context)))
     fun set(context: Context, tag: String) {
-        require(tag in setOf("en", "si", "ta"))
+        require(tag in setOf("en", "ta"))
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit { putString("tag", tag) }
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
     }

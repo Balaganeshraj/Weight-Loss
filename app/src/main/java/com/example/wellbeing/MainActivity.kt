@@ -474,7 +474,7 @@ private fun recipeTitle(item: Recipe) = when(recipes.indexOf(item)) { 0 -> R.str
     val ctx=LocalContext.current
     Text(ctx.getString(R.string.language),fontWeight=FontWeight.SemiBold)
     FlowRow(horizontalArrangement=Arrangement.spacedBy(8.dp)) {
-        listOf("en" to "English","si" to "සිංහල","ta" to "தமிழ்").forEach { (tag,name) ->
+        listOf("en" to "English","ta" to "தமிழ்").forEach { (tag,name) ->
             FilterChip(Language.tag(ctx)==tag,{Language.set(ctx,tag)},{Text(name)},modifier=Modifier.heightIn(min=48.dp))
         }
     }
@@ -530,7 +530,7 @@ private fun entryTitle(context: android.content.Context,entry:Entry):String = wh
 }
 private fun foodSearch(context: android.content.Context,food:ReferenceFood,query:String):Boolean {
     if(query.isBlank())return true
-    return (listOf("en","si","ta").joinToString(" "){tag -> context.createConfigurationContext(android.content.res.Configuration(context.resources.configuration).apply{setLocale(Locale.forLanguageTag(tag))}).getString(food.nameResource)} + food.sourceDescription).contains(query,true)
+    return (listOf("en","ta").joinToString(" "){tag -> context.createConfigurationContext(android.content.res.Configuration(context.resources.configuration).apply{setLocale(Locale.forLanguageTag(tag))}).getString(food.nameResource)} + food.sourceDescription).contains(query,true)
 }
 @Composable private fun MacroText(m:Macros) {
     val ctx=LocalContext.current

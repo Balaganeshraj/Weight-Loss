@@ -13,7 +13,7 @@ Prepared 28 October 2026. This describes the Android release, not a connected pr
 - App access: no login/subscription required for enabled local features; no reviewer credentials.
 - Monetization: no ads, purchases, paid consultations or pharmacy sales implemented.
 - Version: code 3; name 1.1.0-vitalday-rc1; minimum Android 8 (API 26); target API 36. Health Connect additionally requires a supported device/provider and permissions.
-- Language: new VitalDay shell/flows are English, as specified in the new handoff. Existing journal forms retain English/Sinhala/Tamil resources. Do not advertise complete new-screen localization.
+- Language: English and Tamil only. Journal forms, navigation, banners and the assistant demo have Tamil resources; some other flows remain English. Do not advertise complete app-wide Tamil localization.
 
 ## Short description (76 characters; maximum 80)
 
@@ -44,10 +44,10 @@ OPTIONAL HEALTH CONNECT
 On supported devices, request separate read permissions for steps and sleep. Start or cancel a sync yourself and inspect source timestamps and partial results. Imported data stays on your phone. Food intake is never increased by wearable activity. VitalDay does not pair universally with watches or provide emergency monitoring.
 
 PRIVATE BY DEFAULT
-Journal payloads are encrypted using Android Keystore-backed protection. Export or delete local data in settings. Imported Health Connect copies can also be deleted separately. The Android app has no Internet permission, advertising or analytics. A separate backend foundation is included in the source project but is not connected to this app.
+Journal payloads are encrypted using Android Keystore-backed protection. Export or delete local data in settings. Imported Health Connect copies can also be deleted separately. The Android app has no Internet permission, live advertising or analytics. A separate backend foundation is included in the source project but is not connected to this app.
 
 CLEAR LIMITS
-The new VitalDay screens use English. Existing journal forms also retain English, Sinhala and Tamil resources. AI coaching, automated photo/barcode recognition, report-file processing, cloud accounts/sync, clinical bookings, paid calls and pharmacy checkout are not enabled. No provider availability or medicine stock is fabricated.
+English and Tamil are the language choices. Journal forms and the assistant demo have Tamil resources; some other screens remain English. Three rounded promotion spaces are placeholders, with no live advertisers. Try a scripted text assistant or hear sample replies using an installed offline device voice. No microphone recording, live AI or ElevenLabs integration. Live AI coaching, automated photo/barcode recognition, report-file processing, cloud accounts/sync, clinical bookings, paid calls and pharmacy checkout are not enabled. No provider availability or medicine stock is fabricated.
 
 Nutrition values were technically checked against a pinned secondary USDA-derived source, not independently approved by a dietitian. VitalDay supports personal wellness organization; it is not a medical device, diagnosis, prescription or substitute for professional advice. Seek local emergency care for severe or urgent symptoms instead of waiting for this app.
 
@@ -111,7 +111,7 @@ Journal payloads are encrypted with an Android Keystore key. Some technical meta
 Notifications contain a generic check-in message, not medicine names or report values. You control Android notification permissions. Delivery can be delayed by the OS or battery restrictions. A Health Connect setup link can open the external store after your action; its own terms apply. The app does not send contacts, records, payment details or report contents in that link.
 
 ### Sharing, advertising and AI
-This build has no advertising, tracking analytics, developer-controlled collection, remote AI processing or automatic third-party sharing. File export is initiated by you. Clinical providers, pharmacies, payments and cloud accounts are not connected. Any future processing requires updated disclosures, technical authorization and explicit purpose-specific choices before activation.
+This build has three static promotion placeholders, without active ads or an ad SDK. The assistant is a scripted English/Tamil demo. Optional audio uses installed offline device voices for preset replies; no microphone is recorded, and ElevenLabs is not connected. Typed demo messages stay in screen memory and are cleared when leaving. This build has no tracking analytics, developer-controlled collection, remote AI processing or automatic third-party sharing. File export is initiated by you. Clinical providers, pharmacies, payments and cloud accounts are not connected. Any future processing requires updated disclosures, technical authorization and explicit purpose-specific choices before activation.
 
 ### Your controls
 Review/edit your entries, export them, delete imported snapshots or delete the entire local journal in settings. These actions do not erase your copies exported to other locations. Contact `[SUPPORT_EMAIL]` for support after the publisher supplies a functioning address.

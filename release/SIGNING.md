@@ -1,6 +1,6 @@
 # Release signing and placeholder configuration
 
-VitalDay version 1.1.0-vitalday-rc1 (code 3). The AAB is built with R8 and resource shrinking, target/compile SDK 36 and min SDK 26. Existing journal locale resources are bundled together; the new VitalDay screens currently use English. Default application ID `com.example.wellbeing.offline` and publisher details are provisional at the owner's request.
+VitalDay version 1.1.1-vitalday-rc2 (code 4). The AAB is built with R8 and resource shrinking, target/compile SDK 36 and min SDK 26. Existing journal locale resources are bundled together; the new VitalDay screens currently use English. Default application ID `com.example.wellbeing.offline` and publisher details are provisional at the owner's request.
 
 An **unsigned** AAB is a real build artifact but is not ready for Play upload. Do not use a debug certificate as a production upload identity. The accompanying `test-signed.apk` uses the local development certificate only, to allow installation and testing of the optimized bundle.
 

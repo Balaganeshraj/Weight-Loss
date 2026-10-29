@@ -1,4 +1,4 @@
-# VitalDay delivery — 1.1.0-vitalday-rc1
+# VitalDay delivery — 1.1.1-vitalday-rc2
 
 The uploaded specifications describe an 80-item, four-stage product programme. They are requirements, not evidence that accounts, providers, live stock, AI services or clinical review already exist. This delivery implements a native, unrestricted local wellness experience and a separately runnable backend foundation. It is **not the complete Stage A–D commercial/clinical product**.
 
@@ -19,7 +19,13 @@ The uploaded specifications describe an 80-item, four-stage product programme. T
 
 ## Language and accessibility scope
 
-The new VitalDay shell and new flows follow the handoff's **English-interface** release assumption. Existing English/Sinhala/Tamil journal resources remain intact, including three-language notification strings. This release does not claim complete Sinhala/Tamil localization of the newly added VitalDay screens. Native-language review, TalkBack/200%-font checks and physical-device motion testing remain release gates. Existing translation checks are not evidence that English literals in new screens are localized.
+English and Tamil are now the only language choices; Sinhala resources have been removed and previous Sinhala settings fall back to English. Journal forms, navigation, promotion placeholders and assistant screens have matching English/Tamil resources. Other existing VitalDay flows still have English literals, so this is not complete app-wide Tamil localization. Native-language review and broad accessibility/device checks remain release gates.
+
+### Promotion and assistant update
+- Three static rounded 16:9 company promotion placeholders on Today. One featured slot and two secondary slots; secondary slots stack on narrow screens and sit side by side on wider screens. No live advertisements, ad SDK, company claims, tracking, placement purchase or backend inventory system.
+- Explicitly labeled dummy assistant with text and voice-preview modes. English/Tamil sample responses cover planning, sleep, food and movement. Unknown questions receive a limited-demo message; selected medical/emergency keywords receive appropriate care guidance. This is not a diagnostic classifier or general-purpose AI.
+- Voice preview uses only an installed offline Android TTS voice and only scripted replies. Missing voices show a readable fallback. Playback stops when leaving/backgrounding; no microphone permission, recording, recognition or live calls.
+- No ElevenLabs integration or claim of universal language support. Live multilingual conversational AI requires a later authenticated backend/provider integration and appropriate disclosures. Demo text stays in screen memory and is cleared when leaving.
 
 ## Backend implementation
 
@@ -30,7 +36,7 @@ No production deployment, identity-provider provisioning, Android account/cloud 
 ## Explicit remaining work
 
 - Complete the remaining Stage A items: production identity/biometrics, fully reviewed recipes with ingredient weights/substitutions, dietitian-approved target flow, barcode service, licensed exercise instruction/programmes, fully consolidated meal shopping, multi-dose/snooze medication workflows and notification preference granularity.
-- Complete localized new screens if Sinhala/Tamil are to be advertised for the full VitalDay experience.
+- Complete localized new screens if Tamil is to be advertised for the full VitalDay experience.
 - Configure and test cloud identity/sync, AI consent/evaluation, report processing, source-change/history handling and any device vendor integrations before enabling Stage B services.
 - Obtain provider/pharmacy/payment/call contracts and implement audited staff workflows and transactional commerce before Stage C. Stage D remains future work.
 - Complete stable-device, accessibility, content/clinical/security review, production identity and signing, hosted privacy policy and Play declarations before publication. Existing placeholder approvals remain in effect; they do not constitute these reviews.

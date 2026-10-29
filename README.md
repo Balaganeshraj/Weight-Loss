@@ -1,6 +1,6 @@
 # VitalDay Android
 
-A native Compose wellness and daily-planning app based on the supplied VitalDay handoff. Version **1.1.0-vitalday-rc1**, application ID `com.example.wellbeing.offline` (preserved for updates), minimum API 26, target API 36.
+A native Compose wellness and daily-planning app based on the supplied VitalDay handoff. Version **1.1.1-vitalday-rc2**, application ID `com.example.wellbeing.offline` (preserved for updates), minimum API 26, target API 36.
 
 ## Download
 
@@ -15,9 +15,11 @@ The APK is development-signed. CI signing certificates can change; export your j
 - Planner with recurrence, projects, priority, per-day completion and fixed-plan checks; separate focus/workout timers, workout sets, shopping list, sleep diary, medication check-ins and local reminders.
 - Optional Health Connect steps/sleep reads with granular permission requests, cancellable manual sync, freshness/partial result states and imported-copy deletion. No cloud upload.
 - Clear unavailable states for AI, OCR/file reports, clinical booking/payment/calls and pharmacy partners. Private report notes remain usable.
+- Three rounded 16:9 promotion placeholders, with no active advertisers or tracking.
+- Bilingual scripted assistant with text and offline device-voice preview. No live AI, microphone recording or ElevenLabs connection.
 - Separately runnable backend foundation with authenticated encrypted record APIs, consent, ownership/version/idempotency checks and automated tests. It is not connected to the Android app.
 
-**Read [delivery status](docs/vitalday/DELIVERY_STATUS.md)** for precise coverage and missing Stage A–D items. This is not the complete clinical-commerce product or a production-approved release. New VitalDay screens use English per the new handoff; earlier journal forms retain Sinhala/Tamil translations. No professional content/translation approval is claimed.
+**Read [delivery status](docs/vitalday/DELIVERY_STATUS.md)** for precise coverage and missing Stage A–D items. This is not the complete clinical-commerce product or a production-approved release. English and Tamil are the only supported language choices. Journal forms, navigation, promotion placeholders and assistant demo have Tamil resources; other earlier VitalDay flows still contain English text. No professional content/translation approval is claimed.
 
 ## Build and verify
 
